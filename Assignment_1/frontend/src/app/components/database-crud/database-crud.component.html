@@ -1,0 +1,87 @@
+<!-- src/app/components/database-crud/database-crud.component.html -->
+<div class="container p-4">
+  <h2 class="text-2xl font-bold mb-4">Database CRUD Operations</h2>
+
+  <!-- Table Selection -->
+  <div class="mb-4">
+    <label class="block mb-2">Select Table:</label>
+    <select
+      [formControl]="tableControl"
+      (change)="onTableSelect()"
+      class="w-full p-2 border rounded"
+    >
+      <option *ngFor="let table of availableTables" [value]="table">
+        {{ table }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Dynamic Form -->
+  <form
+    *ngIf="selectedTable"
+    [formGroup]="crudForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-gray-100 p-4 rounded"
+  >
+    <div *ngFor="let column of tableColumns" class="mb-3">
+      <label class="block mb-1">{{ column }}</label>
+      <input
+        [formControlName]="column"
+        class="w-full p-2 border rounded"
+        [type]="getInputType(column)"
+        placeholder="Enter {{ column }}"
+      />
+    </div>
+
+    <div class="flex space-x-2">
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+        Create
+      </button>
+      <button
+        type="button"
+        (click)="updateRecord()"
+        class="bg-yellow-500 text-white px-4 py-2 rounded"
+      >
+        Update
+      </button>
+      <button
+        type="button"
+        (click)="deleteRecord()"
+        class="bg-red-500 text-white px-4 py-2 rounded"
+      >
+        Delete
+      </button>
+    </div>
+  </form>
+
+  <!-- Table Data Display -->
+  <!-- Table Data Display -->
+  <div *ngIf="tableData.length" class="mt-4">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-200">
+          <th *ngFor="let column of tableColumns" class="border p-2 text-left">
+            {{ column }}
+          </th>
+          <th class="border p-2 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableData" class="hover:bg-gray-100">
+          <td *ngFor="let column of tableColumns" class="border p-2">
+            {{ row[column] }}
+          </td>
+          <td class="border p-2">
+            <button
+              type="button"
+              (click)="populateFormWithRow(row)"
+              class="bg-yellow-500 text-white px-2 py-1 rounded"
+            >
+              Update
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
