@@ -10,6 +10,8 @@ import {
 
 import { TableService } from '../../services/table.service';
 
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-database-crud',
   templateUrl: './database-crud.component.html',
@@ -23,9 +25,10 @@ export class DatabaseCrudComponent implements OnInit {
   tableData: any[] = [];
   crudForm!: FormGroup;
   tableControl = new FormControl('');
-
+  primaryKey: string | null = null;
   selectedRowForUpdate: any = null;
   operationMessage: string = '';
+  isUpdateAction: boolean = false;
 
   constructor(
     private tableService: TableService,
@@ -51,8 +54,26 @@ export class DatabaseCrudComponent implements OnInit {
 
   onTableSelect() {
     this.selectedTable = this.tableControl.value;
+    this.loadPrimaryKey(); // Fetch primary key for the selected table
     this.loadTableColumns();
     this.loadTableData();
+  }
+
+  loadPrimaryKey() {
+    if (this.selectedTable) {
+      this.tableService.getPrimaryKey(this.selectedTable).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.primaryKey = response.primaryKey;
+          console.log(this.primaryKey);
+          this.operationMessage = '';
+        },
+        error: (err) => {
+          console.error('Error fetching primary key', err);
+          this.operationMessage = 'Failed to fetch primary key';
+        },
+      });
+    }
   }
 
   loadTableColumns() {
@@ -102,61 +123,95 @@ export class DatabaseCrudComponent implements OnInit {
           next: () => {
             this.loadTableData();
             this.crudForm.reset();
-            this.operationMessage = 'Record created successfully';
+            Swal.fire({
+              title: 'Create Operation',
+              text: `New Record Added Successfully to ${this.selectedTable} Table`,
+              icon: 'success',
+            });
           },
           error: (err) => {
             console.error('Error creating record', err);
-            this.operationMessage = 'Failed to create record';
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something Went Wrong While Creating Record!',
+            });
           },
         });
     }
   }
 
+  setUpdateAction() {
+    this.isUpdateAction = true;
+  }
+
   updateRecord() {
-    if (this.crudForm.valid && this.selectedTable) {
-      const primaryKey = this.crudForm.get('id')?.value;
-      if (!primaryKey) {
-        this.operationMessage = 'ID is required for update';
+    if (this.crudForm.valid && this.selectedTable && this.primaryKey) {
+      const primaryKeyValue = this.crudForm.get(this.primaryKey)?.value;
+      if (!primaryKeyValue) {
+        this.operationMessage = `${this.primaryKey} is required for update`;
         return;
       }
 
-      console.log('Updating record', this.crudForm.value);
-
       this.tableService
-        .updateRecord(this.selectedTable, primaryKey, this.crudForm.value)
+        .updateRecord(
+          this.selectedTable,
+          this.primaryKey,
+          primaryKeyValue,
+          this.crudForm.value
+        )
         .subscribe({
           next: () => {
             this.loadTableData();
             this.crudForm.reset();
-            this.operationMessage = 'Record updated successfully';
+            Swal.fire({
+              title: 'Update Operation',
+              text: `Record Updated Successfully from ${this.selectedTable} Table`,
+              icon: 'success',
+            });
           },
           error: (err) => {
             console.error('Error updating record', err);
-            this.operationMessage = 'Failed to update record';
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something Went Wrong While Updating Record!',
+            });
           },
         });
     }
+    this.isUpdateAction = false;
   }
 
-  deleteRecord() {
-    if (this.selectedTable) {
-      const primaryKey = this.crudForm.get('id')?.value;
-      if (!primaryKey) {
+  deleteRecord(row: any) {
+    if (this.selectedTable && this.primaryKey) {
+      const primaryKeyValue = row[this.primaryKey];
+
+      if (!primaryKeyValue) {
         this.operationMessage = 'ID is required for deletion';
         return;
       }
 
-      this.tableService.deleteRecord(this.selectedTable, primaryKey).subscribe({
-        next: () => {
-          this.loadTableData();
-          this.crudForm.reset();
-          this.operationMessage = 'Record deleted successfully';
-        },
-        error: (err) => {
-          console.error('Error deleting record', err);
-          this.operationMessage = 'Failed to delete record';
-        },
-      });
+      this.tableService
+        .deleteRecord(this.selectedTable, this.primaryKey, primaryKeyValue)
+        .subscribe({
+          next: () => {
+            this.loadTableData();
+            Swal.fire({
+              title: 'Create Operation',
+              text: `Record Deletef Successfully from ${this.selectedTable} Table`,
+              icon: 'success',
+            });
+          },
+          error: (err) => {
+            console.error('Error deleting record', err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something Went Wrong While Deleting Record!',
+            });
+          },
+        });
     }
   }
 

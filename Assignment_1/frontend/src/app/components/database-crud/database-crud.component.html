@@ -1,10 +1,9 @@
-<!-- src/app/components/database-crud/database-crud.component.html -->
 <div class="container p-4">
   <h2 class="text-2xl font-bold mb-4">Database CRUD Operations</h2>
 
   <!-- Table Selection -->
   <div class="mb-4">
-    <label class="block mb-2">Select Table:</label>
+    <label class="block mb-2 font-medium">Select Table:</label>
     <select
       [formControl]="tableControl"
       (change)="onTableSelect()"
@@ -23,65 +22,109 @@
     (ngSubmit)="onSubmit()"
     class="bg-gray-100 p-4 rounded"
   >
+    <h3 class="text-xl font-semibold mb-4">Manage {{ selectedTable }}</h3>
+
+    <!-- Dynamic Fields -->
     <div *ngFor="let column of tableColumns" class="mb-3">
-      <label class="block mb-1">{{ column }}</label>
+      <label class="block mb-1 font-medium">{{ column }}</label>
       <input
         [formControlName]="column"
         class="w-full p-2 border rounded"
         [type]="getInputType(column)"
-        placeholder="Enter {{ column }}"
+        [placeholder]="'Enter ' + column"
       />
+      <!-- Validation Feedback -->
+      <small
+        *ngIf="crudForm.get(column)?.invalid && crudForm.get(column)?.touched"
+        class="text-red-500"
+      >
+        {{ column }} is required.
+      </small>
     </div>
 
-    <div class="flex space-x-2">
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+    <!-- Action Buttons -->
+    <div class="flex space-x-2 mt-4">
+      <button
+        type="submit"
+        class="px-4 py-2 rounded"
+        [ngClass]="{
+          'bg-blue-500 text-white': !crudForm.invalid && !isUpdateAction,
+          'bg-gray-400 text-gray-700': crudForm.invalid || isUpdateAction,
+          'px-4 py-2 rounded': true
+        }"
+        [disabled]="crudForm.invalid || isUpdateAction"
+      >
         Create
       </button>
       <button
         type="button"
         (click)="updateRecord()"
-        class="bg-yellow-500 text-white px-4 py-2 rounded"
+        [disabled]="crudForm.invalid || !isUpdateAction"
+        [ngClass]="{
+          'bg-yellow-500 text-white': !crudForm.invalid && isUpdateAction,
+          'bg-gray-400 text-gray-700': crudForm.invalid || !isUpdateAction,
+          'px-4 py-2 rounded': true
+        }"
       >
         Update
-      </button>
-      <button
-        type="button"
-        (click)="deleteRecord()"
-        class="bg-red-500 text-white px-4 py-2 rounded"
-      >
-        Delete
       </button>
     </div>
   </form>
 
   <!-- Table Data Display -->
-  <!-- Table Data Display -->
-  <div *ngIf="tableData.length" class="mt-4">
-    <table class="w-full border-collapse">
+  <div *ngIf="tableData.length" class="mt-4 overflow-auto">
+    <h3 class="text-xl font-semibold mb-2">Data for {{ selectedTable }}</h3>
+    <table class="w-full border-collapse min-w-max">
       <thead>
         <tr class="bg-gray-200">
           <th *ngFor="let column of tableColumns" class="border p-2 text-left">
-            {{ column }}
+            {{ column.toUpperCase() }}
           </th>
           <th class="border p-2 text-left">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of tableData" class="hover:bg-gray-100">
+        <tr
+          *ngFor="let row of tableData"
+          class="hover:bg-gray-100"
+          [class.bg-blue-100]="row === selectedRowForUpdate"
+        >
           <td *ngFor="let column of tableColumns" class="border p-2">
             {{ row[column] }}
           </td>
           <td class="border p-2">
             <button
               type="button"
-              (click)="populateFormWithRow(row)"
-              class="bg-yellow-500 text-white px-2 py-1 rounded"
+              (click)="populateFormWithRow(row); setUpdateAction()"
+              [disabled]="!primaryKey"
+              [ngClass]="{
+                'bg-gray-400 text-gray-700': !primaryKey,
+                'bg-yellow-500 text-white': primaryKey,
+                'px-2 py-1 mx-1 rounded': true
+              }"
             >
               Update
+            </button>
+            <button
+              type="button"
+              (click)="deleteRecord(row)"
+              [disabled]="!primaryKey"
+              [ngClass]="{
+                'bg-gray-400 text-gray-700': !primaryKey,
+                'bg-red-500 text-white': primaryKey,
+                'px-2 py-1 mx-1 rounded': true
+              }"
+            >
+              Delete
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- No Data Message -->
+  <div *ngIf="!tableData.length && selectedTable" class="mt-4 text-gray-500">
+    No records found for {{ selectedTable }}.
   </div>
 </div>
