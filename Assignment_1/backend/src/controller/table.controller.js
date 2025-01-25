@@ -110,34 +110,32 @@ export const deleteData = async (req, res) => {
   }
 };
 
-// Get the primary key of a table
-export const getPrimaryKey = async (req, res) => {
+export const getPrimaryKeyInfo = async (req, res) => {
   try {
     const { tableName } = req.params;
 
-    console.log("Received request for table:", tableName); // Debugging: Log table name
-
+    // Query to get primary key column and extra details (e.g., AUTO_INCREMENT)
     const [result] = await dbInstance.query(
-      `SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE 
-       WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'`,
+      `SELECT COLUMN_NAME, EXTRA FROM information_schema.COLUMNS 
+       WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_KEY = 'PRI'`,
       [process.env.DB_NAME, tableName]
     );
 
-    console.log("Query result:", result); // Debugging: Log query result
-
     if (result.length === 0) {
-      console.log("No primary key found for table:", tableName); // Debugging: Log if no primary key found
       return res
         .status(404)
         .json({ error: "Primary key not found for the table" });
     }
 
-    const primaryKey = result[0].COLUMN_NAME;
-    console.log("Primary key column:", primaryKey); // Debugging: Log primary key column
-    res.json({ primaryKey });
+    const primaryKeyInfo = result.map((row) => ({
+      columnName: row.COLUMN_NAME,
+      isAutoIncrement: row.EXTRA.includes("auto_increment"),
+    }));
+
+    res.json({ primaryKeyInfo });
   } catch (error) {
-    console.error("Error:", error.message); // Debugging: Log error message
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching primary key info:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

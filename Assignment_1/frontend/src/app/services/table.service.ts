@@ -28,10 +28,14 @@ export class TableService {
   }
 
   // Fetch the primary key for a table
-  getPrimaryKey(tableName: string): Observable<{ primaryKey: string }> {
-    return this.http.get<{ primaryKey: string }>(
-      `${this.apiUrl}/${tableName}/primary-key`
-    );
+  getPrimaryKey(
+    tableName: string
+  ): Observable<{
+    primaryKeyInfo: { columnName: string; isAutoIncrement: boolean }[];
+  }> {
+    return this.http.get<{
+      primaryKeyInfo: { columnName: string; isAutoIncrement: boolean }[];
+    }>(`${this.apiUrl}/${tableName}/primary-key`);
   }
 
   // Create a new record

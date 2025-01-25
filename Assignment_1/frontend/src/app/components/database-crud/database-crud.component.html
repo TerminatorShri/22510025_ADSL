@@ -17,7 +17,7 @@
 
   <!-- Dynamic Form -->
   <form
-    *ngIf="selectedTable"
+    *ngIf="crudForm && selectedTable"
     [formGroup]="crudForm"
     (ngSubmit)="onSubmit()"
     class="bg-gray-100 p-4 rounded"
@@ -33,6 +33,7 @@
         [type]="getInputType(column)"
         [placeholder]="'Enter ' + column"
       />
+
       <!-- Validation Feedback -->
       <small
         *ngIf="crudForm.get(column)?.invalid && crudForm.get(column)?.touched"

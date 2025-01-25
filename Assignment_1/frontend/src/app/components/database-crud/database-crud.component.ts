@@ -29,6 +29,7 @@ export class DatabaseCrudComponent implements OnInit {
   selectedRowForUpdate: any = null;
   operationMessage: string = '';
   isUpdateAction: boolean = false;
+  isAutoIncrement: boolean = false;
 
   constructor(
     private tableService: TableService,
@@ -63,10 +64,24 @@ export class DatabaseCrudComponent implements OnInit {
     if (this.selectedTable) {
       this.tableService.getPrimaryKey(this.selectedTable).subscribe({
         next: (response) => {
-          console.log(response);
-          this.primaryKey = response.primaryKey;
-          console.log(this.primaryKey);
-          this.operationMessage = '';
+          console.log('Response received:', response);
+
+          if (response.primaryKeyInfo && response.primaryKeyInfo.length > 0) {
+            const keyInfo = response.primaryKeyInfo[0]; 
+            this.primaryKey = keyInfo.columnName;
+            this.isAutoIncrement = keyInfo.isAutoIncrement;
+
+            // console.log('Primary Key:', this.primaryKey);
+            // console.log('Is Auto Increment:', this.isAutoIncrement);
+
+            if (this.primaryKey && this.isAutoIncrement) {
+              this.crudForm.get(this.primaryKey)?.disable();
+            }
+          } else {
+            console.warn('No primary key found for the selected table');
+            this.operationMessage =
+              'No primary key found for the selected table';
+          }
         },
         error: (err) => {
           console.error('Error fetching primary key', err);
