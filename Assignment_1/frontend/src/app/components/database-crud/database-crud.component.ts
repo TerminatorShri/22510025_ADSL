@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 
 import { TableService } from '../../services/table.service';
-
 import Swal from 'sweetalert2';
 
 @Component({
@@ -42,51 +41,34 @@ export class DatabaseCrudComponent implements OnInit {
 
   loadTables() {
     this.tableService.getTables().subscribe({
-      next: (tables) => {
-        this.availableTables = tables;
-        this.operationMessage = '';
-      },
-      error: (err) => {
-        console.error('Error loading tables', err);
-        this.operationMessage = 'Failed to load tables';
-      },
+      next: (tables) => (this.availableTables = tables),
+      error: () => (this.operationMessage = 'Failed to load tables'),
     });
   }
 
   onTableSelect() {
     this.selectedTable = this.tableControl.value;
-    this.loadPrimaryKey(); // Fetch primary key for the selected table
-    this.loadTableColumns();
-    this.loadTableData();
+    if (this.selectedTable) {
+      this.loadPrimaryKey();
+      this.loadTableColumns();
+      this.loadTableData();
+    }
   }
 
   loadPrimaryKey() {
     if (this.selectedTable) {
       this.tableService.getPrimaryKey(this.selectedTable).subscribe({
         next: (response) => {
-          console.log('Response received:', response);
-
-          if (response.primaryKeyInfo && response.primaryKeyInfo.length > 0) {
-            const keyInfo = response.primaryKeyInfo[0]; 
+          if (response.primaryKeyInfo?.length) {
+            const keyInfo = response.primaryKeyInfo[0];
             this.primaryKey = keyInfo.columnName;
             this.isAutoIncrement = keyInfo.isAutoIncrement;
-
-            // console.log('Primary Key:', this.primaryKey);
-            // console.log('Is Auto Increment:', this.isAutoIncrement);
-
-            if (this.primaryKey && this.isAutoIncrement) {
-              this.crudForm.get(this.primaryKey)?.disable();
-            }
           } else {
-            console.warn('No primary key found for the selected table');
             this.operationMessage =
               'No primary key found for the selected table';
           }
         },
-        error: (err) => {
-          console.error('Error fetching primary key', err);
-          this.operationMessage = 'Failed to fetch primary key';
-        },
+        error: () => (this.operationMessage = 'Failed to fetch primary key'),
       });
     }
   }
@@ -97,12 +79,8 @@ export class DatabaseCrudComponent implements OnInit {
         next: (columns) => {
           this.tableColumns = columns;
           this.initForm(columns);
-          this.operationMessage = '';
         },
-        error: (err) => {
-          console.error('Error loading columns', err);
-          this.operationMessage = 'Failed to load table columns';
-        },
+        error: () => (this.operationMessage = 'Failed to load table columns'),
       });
     }
   }
@@ -110,7 +88,13 @@ export class DatabaseCrudComponent implements OnInit {
   initForm(columns: string[]) {
     const formConfig: { [key: string]: any[] } = {};
     columns.forEach((col) => {
-      formConfig[col] = ['', Validators.required];
+      formConfig[col] = [
+        {
+          value: '',
+          disabled: col === this.primaryKey && this.isAutoIncrement,
+        },
+        Validators.required,
+      ];
     });
     this.crudForm = this.formBuilder.group(formConfig);
   }
@@ -118,14 +102,8 @@ export class DatabaseCrudComponent implements OnInit {
   loadTableData() {
     if (this.selectedTable) {
       this.tableService.getData(this.selectedTable).subscribe({
-        next: (data) => {
-          this.tableData = data;
-          this.operationMessage = '';
-        },
-        error: (err) => {
-          console.error('Error loading table data', err);
-          this.operationMessage = 'Failed to load table data';
-        },
+        next: (data) => (this.tableData = data),
+        error: () => (this.operationMessage = 'Failed to load table data'),
       });
     }
   }
@@ -138,94 +116,53 @@ export class DatabaseCrudComponent implements OnInit {
           next: () => {
             this.loadTableData();
             this.crudForm.reset();
-            Swal.fire({
-              title: 'Create Operation',
-              text: `New Record Added Successfully to ${this.selectedTable} Table`,
-              icon: 'success',
-            });
+            Swal.fire('Success', 'Record added successfully!', 'success');
           },
-          error: (err) => {
-            console.error('Error creating record', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Something Went Wrong While Creating Record!',
-            });
-          },
+          error: () => Swal.fire('Error', 'Failed to add record', 'error'),
         });
     }
   }
 
   setUpdateAction() {
     this.isUpdateAction = true;
+    if (this.primaryKey) {
+      this.crudForm.get(this.primaryKey)?.disable();
+    }
   }
 
   updateRecord() {
     if (this.crudForm.valid && this.selectedTable && this.primaryKey) {
-      const primaryKeyValue = this.crudForm.get(this.primaryKey)?.value;
-      if (!primaryKeyValue) {
-        this.operationMessage = `${this.primaryKey} is required for update`;
-        return;
-      }
-
+      const primaryKeyValue = this.selectedRowForUpdate[this.primaryKey];
       this.tableService
         .updateRecord(
           this.selectedTable,
           this.primaryKey,
           primaryKeyValue,
-          this.crudForm.value
+          this.crudForm.getRawValue()
         )
         .subscribe({
           next: () => {
             this.loadTableData();
             this.crudForm.reset();
-            Swal.fire({
-              title: 'Update Operation',
-              text: `Record Updated Successfully from ${this.selectedTable} Table`,
-              icon: 'success',
-            });
+            this.isUpdateAction = false;
+            Swal.fire('Success', 'Record updated successfully!', 'success');
           },
-          error: (err) => {
-            console.error('Error updating record', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Something Went Wrong While Updating Record!',
-            });
-          },
+          error: () => Swal.fire('Error', 'Failed to update record', 'error'),
         });
     }
-    this.isUpdateAction = false;
   }
 
   deleteRecord(row: any) {
     if (this.selectedTable && this.primaryKey) {
       const primaryKeyValue = row[this.primaryKey];
-
-      if (!primaryKeyValue) {
-        this.operationMessage = 'ID is required for deletion';
-        return;
-      }
-
       this.tableService
         .deleteRecord(this.selectedTable, this.primaryKey, primaryKeyValue)
         .subscribe({
           next: () => {
             this.loadTableData();
-            Swal.fire({
-              title: 'Create Operation',
-              text: `Record Deletef Successfully from ${this.selectedTable} Table`,
-              icon: 'success',
-            });
+            Swal.fire('Success', 'Record deleted successfully!', 'success');
           },
-          error: (err) => {
-            console.error('Error deleting record', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Something Went Wrong While Deleting Record!',
-            });
-          },
+          error: () => Swal.fire('Error', 'Failed to delete record', 'error'),
         });
     }
   }
@@ -236,10 +173,15 @@ export class DatabaseCrudComponent implements OnInit {
         this.crudForm.get(key)?.setValue(row[key]);
       });
       this.selectedRowForUpdate = row;
+      this.setUpdateAction();
     }
   }
 
   getInputType(column: string): string {
+    // Example: Customize input types based on column name
+    if (column.toLowerCase().includes('date')) return 'date';
+    if (column.toLowerCase().includes('email')) return 'email';
+    if (column.toLowerCase().includes('password')) return 'password';
     return 'text';
   }
 }
