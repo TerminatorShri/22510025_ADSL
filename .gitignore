@@ -6,7 +6,10 @@ app/**/*.js
 app/**/*.js.map
 
 .env
-.docx
+
+*.zip
+Assignment_Submissions/
+.vscode/
 
 # dependencies
 node_modules/
