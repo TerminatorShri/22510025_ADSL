@@ -1,10 +1,46 @@
-<div style="display: flex">
-  <div style="width: 200px; border-right: 1px solid #ccc; padding: 10px">
-    <button (click)="navigateHod('')">Department Profile</button><br />
-    <button (click)="navigateHod('records')">Department Records</button><br />
-    <button (click)="navigateHod('manage')">Manage</button><br />
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-100 p-4 flex flex-col justify-between">
+    <div class="space-y-4">
+      <button
+        (click)="navigateHod('')"
+        [class.bg-blue-500]="activeRoute === ''"
+        [class.text-white]="activeRoute === ''"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Department Profile
+      </button>
+
+      <button
+        (click)="navigateHod('records')"
+        [class.bg-blue-500]="activeRoute === 'records'"
+        [class.text-white]="activeRoute === 'records'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Department Courses
+      </button>
+
+      <button
+        (click)="navigateHod('manage')"
+        [class.bg-blue-500]="activeRoute === 'manage'"
+        [class.text-white]="activeRoute === 'manage'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Manage Department
+      </button>
+    </div>
+
+    <!-- Logout Button -->
+    <button
+      (click)="confirmLogout()"
+      class="w-full p-3 rounded-lg text-left bg-red-500 text-white hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
   </div>
-  <div style="flex-grow: 1; padding: 10px">
+
+  <!-- Content -->
+  <div class="flex-grow p-4 overflow-auto">
     <router-outlet></router-outlet>
   </div>
 </div>

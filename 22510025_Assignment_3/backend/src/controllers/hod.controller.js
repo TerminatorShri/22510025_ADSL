@@ -144,19 +144,24 @@ export const updateInstructorSalary = async (req, res) => {
 export const assignInstructorToCourse = async (req, res) => {
   try {
     const { instructorId, courseId, secId, semester, year } = req.body;
+    console.log(req.body);
 
     if (!instructorId || !courseId || !secId || !semester || !year) {
+      console.log("All fields are required");
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
 
     const result = await HOD.assignInstructorToCourse(
       instructorId,
       courseId,
-      secId,
-      semester,
+      secId,      semester,
       year
     );
+
+    console.log(result);
+
     if (!result.success) {
+      console.log(result.message);
       return res.status(400).json(new ApiError(400, result.message));
     }
 
@@ -176,6 +181,7 @@ export const assignInstructorToCourse = async (req, res) => {
 export const addFunds = async (req, res) => {
   try {
     const { deptName, amount } = req.body;
+    console.log(req.body);
 
     if (!deptName || !amount) {
       return res
@@ -202,6 +208,7 @@ export const addFunds = async (req, res) => {
 export const assignAdvisor = async (req, res) => {
   try {
     const { studentId, instructorId } = req.body;
+    console.log(req.body);
 
     // Check if the necessary fields are provided
     if (!studentId || !instructorId) {
@@ -219,6 +226,7 @@ export const assignAdvisor = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, null, "Advisor assigned successfully"));
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json(new ApiError(500, "Internal Server Error", [], error.stack));

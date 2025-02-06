@@ -1,1 +1,25 @@
-<p>hod-profile works!</p>
+<div class="flex justify-center items-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-96">
+    <div class="text-gray-700 space-y-3">
+      <p>
+        <span class="font-semibold">Department Name:</span>
+        {{ departmentInfo?.dept_name }}
+      </p>
+      <p>
+        <span class="font-semibold">Building Name:</span> {{ departmentInfo?.building }}
+      </p>
+      <p>
+        <span class="font-semibold">Department Budget:</span>
+        {{ departmentInfo?.budget }}
+      </p>
+      <p>
+        <span class="font-semibold">Number of Rooms:</span>
+        {{ departmentInfo?.total_rooms }}
+      </p>
+      <p>
+        <span class="font-semibold">Room Number:</span>
+        {{ departmentInfo?.room_numbers }}
+      </p>
+    </div>
+  </div>
+</div>

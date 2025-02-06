@@ -162,6 +162,7 @@ const HOD = {
       ? { success: true, message: "Advisor assigned successfully" }
       : { success: false, message: "Failed to assign advisor" };
   },
+  
 };
 
 export default HOD;

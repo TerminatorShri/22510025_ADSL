@@ -1,1 +1,138 @@
-<p>hod-records works!</p>
+<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl mx-auto">
+  <h3 class="text-xl font-semibold text-gray-700 text-center mb-4">
+    HOD's Course Records
+  </h3>
+
+  <!-- Show Table if Courses Exist -->
+  <div *ngIf="courses.length > 0; else noCourses">
+    <table class="min-w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="py-2 px-4 border-b text-left">Course ID</th>
+          <th class="py-2 px-4 border-b text-left">Course Title</th>
+          <th class="py-2 px-4 border-b text-left">Credits</th>
+          <th class="py-2 px-4 border-b text-left">Instructor Name</th>
+          <th class="py-2 px-4 border-b text-left">Salary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of courses" class="hover:bg-gray-100">
+          <td class="py-2 px-4 border-b">{{ course.course_id }}</td>
+          <td class="py-2 px-4 border-b">{{ course.course_title }}</td>
+          <td class="py-2 px-4 border-b">{{ course.credits }}</td>
+          <td class="py-2 px-4 border-b">{{ course.instructor_name }}</td>
+          <td class="py-2 px-4 border-b">${{ course.salary }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Courses Fallback -->
+  <ng-template #noCourses>
+    <p class="text-center text-gray-500 mt-6">
+      No courses found for this department.
+    </p>
+  </ng-template>
+
+  <!-- Form Section: Side by Side -->
+  <div class="grid grid-cols-2 gap-6 mt-6">
+    <!-- Add New Course Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Add New Course</h4>
+      <form [formGroup]="addCourseForm" (ngSubmit)="onAddCourse()">
+        <div class="mb-4">
+          <label for="courseId" class="block text-gray-700">Course ID</label>
+          <input
+            formControlName="courseId"
+            type="text"
+            id="courseId"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Course ID"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="title" class="block text-gray-700">Title</label>
+          <input
+            formControlName="title"
+            type="text"
+            id="title"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Course Title"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="credits" class="block text-gray-700">Credits</label>
+          <input
+            formControlName="credits"
+            type="number"
+            [min]="0"
+            [max]="4"
+            id="credits"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Credits"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          [disabled]="addCourseForm.invalid"
+        >
+          Add Course
+        </button>
+      </form>
+    </div>
+
+    <!-- Add New Instructor Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Add New Instructor</h4>
+      <form [formGroup]="addInstructorForm" (ngSubmit)="onAddInstructor()">
+        <div class="mb-4">
+          <label for="instructorId" class="block text-gray-700"
+            >Instructor ID</label
+          >
+          <input
+            formControlName="instructorId"
+            type="text"
+            id="instructorId"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor ID"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700">Name</label>
+          <input
+            formControlName="name"
+            type="text"
+            id="name"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor Name"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="salary" class="block text-gray-700">Salary</label>
+          <input
+            formControlName="salary"
+            type="number"
+            id="salary"
+            [min]="1000"
+            [max]="100000"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor Salary"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Add Instructor
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

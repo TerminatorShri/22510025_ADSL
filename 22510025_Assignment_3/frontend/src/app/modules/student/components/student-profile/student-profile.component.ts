@@ -39,7 +39,7 @@ export class StudentProfileComponent {
         console.log(
           '🚀 ~ StudentProfileComponent ~ this.studentActionService.getStudentInfo ~ studentInfo:',
           this.studentInfo
-      );
+        );
       },
       error: (err) => {
         console.error('Error fetching student info:', err);

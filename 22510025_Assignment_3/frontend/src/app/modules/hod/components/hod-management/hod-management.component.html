@@ -1,1 +1,179 @@
-<p>hod-management works!</p>
+<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl mx-auto">
+  <h3 class="text-xl font-semibold text-gray-700 text-center mb-4">
+    HOD's Management Panel
+  </h3>
+
+  <!-- Side-by-side forms for Salary Update and Add Funds -->
+  <div class="grid grid-cols-2 gap-6 mb-6">
+    <!-- Change Salary Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Change Instructor's Salary</h4>
+      <form [formGroup]="changeSalaryForm" (ngSubmit)="onChangeSalary()">
+        <div class="mb-4">
+          <label for="instructorId" class="block text-gray-700"
+            >Instructor ID</label
+          >
+          <input
+            type="text"
+            id="instructorId"
+            formControlName="instructorId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor ID"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="newSalary" class="block text-gray-700">New Salary</label>
+          <input
+            type="number"
+            id="newSalary"
+            formControlName="newSalary"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter New Salary"
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          [disabled]="changeSalaryForm.invalid"
+        >
+          Update Salary
+        </button>
+      </form>
+    </div>
+
+    <!-- Add Funds to Department Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Add Funds to Department</h4>
+      <form [formGroup]="addFundsForm" (ngSubmit)="onAddFunds()">
+        <div class="mb-4">
+          <label for="amount" class="block text-gray-700">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            formControlName="amount"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Amount"
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          [disabled]="addFundsForm.invalid"
+        >
+          Add Funds
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Forms for Assigning Instructor to Course and Student -->
+  <div class="grid grid-cols-1 gap-6 mb-6">
+    <!-- Assign Instructor to Course Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Assign Instructor to Course</h4>
+      <form
+        [formGroup]="assignInstructorForm"
+        (ngSubmit)="onAssignInstructor()"
+      >
+        <div class="mb-4">
+          <label for="instructorId" class="block text-gray-700"
+            >Instructor ID</label
+          >
+          <input
+            type="text"
+            id="instructorId"
+            formControlName="instructorId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor ID"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="courseId" class="block text-gray-700">Course ID</label>
+          <input
+            type="text"
+            id="courseId"
+            formControlName="courseId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Course ID"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="secId" class="block text-gray-700">Section ID</label>
+          <input
+            type="text"
+            id="secId"
+            formControlName="secId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Section ID"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="semester" class="block text-gray-700">Semester</label>
+          <input
+            type="text"
+            id="semester"
+            formControlName="semester"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Semester"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="year" class="block text-gray-700">Year</label>
+          <input
+            type="number"
+            id="year"
+            formControlName="year"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Year"
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          [disabled]="assignInstructorForm.invalid"
+        >
+          Assign Instructor
+        </button>
+      </form>
+    </div>
+
+    <!-- Assign Instructor to Student Form -->
+    <div class="bg-gray-100 p-6 rounded-lg">
+      <h4 class="text-lg font-semibold mb-4">Assign Instructor to Student</h4>
+      <form
+        [formGroup]="assignInstructorToStudentForm"
+        (ngSubmit)="onAssignInstructorToStudent()"
+      >
+        <div class="mb-4">
+          <label for="studentId" class="block text-gray-700">Student ID</label>
+          <input
+            type="text"
+            id="studentId"
+            formControlName="studentId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Student ID"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="instructorId" class="block text-gray-700"
+            >Instructor ID</label
+          >
+          <input
+            type="text"
+            id="instructorId"
+            formControlName="instructorId"
+            class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+            placeholder="Enter Instructor ID"
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          [disabled]="assignInstructorToStudentForm.invalid"
+        >
+          Assign Instructor to Student
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
