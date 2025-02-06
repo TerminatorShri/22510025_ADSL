@@ -1,0 +1,55 @@
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-100 p-4 flex flex-col justify-between">
+    <div class="space-y-4">
+      <button
+        (click)="navigateStudent('')"
+        [class.bg-blue-500]="activeRoute === ''"
+        [class.text-white]="activeRoute === ''"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 transition"
+      >
+        Student Profile
+      </button>
+
+      <button
+        (click)="navigateStudent('grades')"
+        [class.bg-blue-500]="activeRoute === 'grades'"
+        [class.text-white]="activeRoute === 'grades'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 transition"
+      >
+        Student Grades
+      </button>
+
+      <button
+        (click)="navigateStudent('courses')"
+        [class.bg-blue-500]="activeRoute === 'courses'"
+        [class.text-white]="activeRoute === 'courses'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 transition"
+      >
+        Student Courses
+      </button>
+
+      <button
+        (click)="navigateStudent('application')"
+        [class.bg-blue-500]="activeRoute === 'application'"
+        [class.text-white]="activeRoute === 'application'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 transition"
+      >
+        Student Applications
+      </button>
+    </div>
+
+    <!-- Logout Button -->
+    <button
+      (click)="confirmLogout()"
+      class="w-full p-3 rounded-lg text-left bg-red-500 text-white hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-grow p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

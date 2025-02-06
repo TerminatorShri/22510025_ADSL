@@ -1,0 +1,23 @@
+<div class="flex justify-center items-center min-h-screen p-4">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+    <!-- Grades Table -->
+    <table class="min-w-full table-auto border-collapse">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 border-b text-left">Course ID</th>
+          <th class="py-2 px-4 border-b text-left">Course Title</th>
+          <th class="py-2 px-4 border-b text-left">Credits</th>
+          <th class="py-2 px-4 border-b text-left">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let grade of grades">
+          <td class="py-2 px-4 border-b">{{ grade.course_id }}</td>
+          <td class="py-2 px-4 border-b">{{ grade.course_title }}</td>
+          <td class="py-2 px-4 border-b">{{ grade.credits }}</td>
+          <td class="py-2 px-4 border-b">{{ grade.grade }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

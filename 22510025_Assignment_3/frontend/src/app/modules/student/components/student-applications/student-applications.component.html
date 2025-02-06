@@ -1,0 +1,47 @@
+<div class="flex justify-center items-center min-h-screen p-4">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+    <!-- Eligible Courses Table -->
+    <table class="min-w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="py-2 px-4 border-b text-center">Course ID</th>
+          <th class="py-2 px-4 border-b text-center">Course Title</th>
+          <th class="py-2 px-4 border-b text-center">Instructor</th>
+          <th class="py-2 px-4 border-b text-center">Credits</th>
+          <th class="py-2 px-4 border-b text-center">Semester</th>
+          <th class="py-2 px-4 border-b text-center">Section ID</th>
+          <th class="py-2 px-4 border-b text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of eligibleCourses">
+          <td class="py-2 px-4 border-b text-center">{{ course.course_id }}</td>
+          <td class="py-2 px-4 border-b text-center">
+            {{ course.course_title }}
+          </td>
+          <td class="py-2 px-4 border-b text-center">
+            {{ course.instructor_name }}
+          </td>
+          <td class="py-2 px-4 border-b text-center">{{ course.credits }}</td>
+          <td class="py-2 px-4 border-b text-center">{{ course.semester }}</td>
+          <td class="py-2 px-4 border-b text-center">{{ course.sec_id }}</td>
+          <td class="py-2 px-4 border-b text-center">
+            <button
+              (click)="
+                applyForCourse(
+                  course.course_id,
+                  course.sec_id,
+                  course.semester,
+                  course.year
+                )
+              "
+              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Apply
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

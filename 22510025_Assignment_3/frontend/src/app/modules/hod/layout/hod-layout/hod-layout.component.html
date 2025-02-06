@@ -1,0 +1,10 @@
+<div style="display: flex">
+  <div style="width: 200px; border-right: 1px solid #ccc; padding: 10px">
+    <button (click)="navigateHod('')">Department Profile</button><br />
+    <button (click)="navigateHod('records')">Department Records</button><br />
+    <button (click)="navigateHod('manage')">Manage</button><br />
+  </div>
+  <div style="flex-grow: 1; padding: 10px">
+    <router-outlet></router-outlet>
+  </div>
+</div>

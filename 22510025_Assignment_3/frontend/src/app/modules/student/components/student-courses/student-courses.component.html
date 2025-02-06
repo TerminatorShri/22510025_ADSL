@@ -1,0 +1,58 @@
+<div class="flex justify-center items-center min-h-screen p-4">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+    <!-- Semester Selection Dropdown -->
+    <div class="mb-4">
+      <label for="semester" class="block text-lg text-gray-700">
+        Select Semester
+      </label>
+      <select
+        id="semester"
+        [(ngModel)]="selectedSemester"
+        class="w-full p-2 mt-2 border border-gray-300 rounded-md pr-8"
+        (change)="onSemesterChange()"
+      >
+        <option value="Fall">Fall</option>
+        <option value="Winter">Winter</option>
+        <option value="Spring">Spring</option>
+        <option value="Summer">Summer</option>
+      </select>
+    </div>
+
+    <!-- Course Table -->
+    <div *ngIf="courses && courses.length > 0; else noCourses">
+      <table class="min-w-full table-auto border-collapse">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 border-b text-left">Course ID</th>
+            <th class="py-2 px-4 border-b text-left">Course Title</th>
+            <th class="py-2 px-4 border-b text-left">Instructor</th>
+            <th class="py-2 px-4 border-b text-left">Day</th>
+            <th class="py-2 px-4 border-b text-left">Time</th>
+            <th class="py-2 px-4 border-b text-left">Building</th>
+            <th class="py-2 px-4 border-b text-left">Room</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let course of courses">
+            <td class="py-2 px-4 border-b">{{ course.course_id }}</td>
+            <td class="py-2 px-4 border-b">{{ course.course_title }}</td>
+            <td class="py-2 px-4 border-b">{{ course.instructor_name }}</td>
+            <td class="py-2 px-4 border-b">{{ course.day }}</td>
+            <td class="py-2 px-4 border-b">
+              {{ course.start_time }} - {{ course.end_time }}
+            </td>
+            <td class="py-2 px-4 border-b">{{ course.building_name }}</td>
+            <td class="py-2 px-4 border-b">{{ course.room_number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Courses Message -->
+    <ng-template #noCourses>
+      <p class="text-center text-gray-500 mt-6">
+        No courses found for the selected semester.
+      </p>
+    </ng-template>
+  </div>
+</div>

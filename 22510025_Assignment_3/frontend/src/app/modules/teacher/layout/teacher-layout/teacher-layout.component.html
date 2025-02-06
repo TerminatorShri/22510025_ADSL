@@ -1,0 +1,10 @@
+<div style="display: flex">
+  <div style="width: 200px; border-right: 1px solid #ccc; padding: 10px">
+    <button (click)="navigateTeacher('')">Teacher Profile</button><br />
+    <button (click)="navigateTeacher('records')">Teacher Records</button><br />
+    <button (click)="navigateTeacher('courses')">Teacher Schedule</button><br />
+  </div>
+  <div style="flex-grow: 1; padding: 10px">
+    <router-outlet></router-outlet>
+  </div>
+</div>

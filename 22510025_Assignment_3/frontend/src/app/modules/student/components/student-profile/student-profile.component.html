@@ -1,0 +1,25 @@
+<div class="flex justify-center items-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-lg p-6 w-96">
+    <div class="text-gray-700 space-y-3">
+      <p>
+        <span class="font-semibold">Student ID:</span>
+        {{ studentInfo?.student_id }}
+      </p>
+      <p>
+        <span class="font-semibold">Name:</span> {{ studentInfo?.student_name }}
+      </p>
+      <p>
+        <span class="font-semibold">Department:</span>
+        {{ studentInfo?.dept_name }}
+      </p>
+      <p>
+        <span class="font-semibold">Total Credits:</span>
+        {{ studentInfo?.tot_cred }}
+      </p>
+      <p>
+        <span class="font-semibold">Advisor:</span>
+        {{ studentInfo?.advisor_name }} ({{ studentInfo?.advisor_id }})
+      </p>
+    </div>
+  </div>
+</div>
