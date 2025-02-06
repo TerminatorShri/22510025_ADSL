@@ -61,8 +61,10 @@ export const getTeacherSchedule = async (req, res) => {
     const schedule = await Teacher.getTeacherSchedule(teacherId, semester);
     if (!schedule) {
       return res
-        .status(404)
-        .json(new ApiError(404, "No schedule found for this semester"));
+        .status(200)
+        .json(
+          new ApiResponse(200, null, "No schedule found for this semester")
+        );
     }
 
     return res
@@ -106,49 +108,12 @@ export const getStudentsWithMarks = async (req, res) => {
   }
 };
 
-export const uploadStudentMarks = async (req, res) => {
-  try {
-    const teacherId = req.headers["user-id"]; // Extract teacher ID from headers
-    const { studentId, courseId, semester, year, grade } = req.body;
-
-    if (!studentId || !courseId || !semester || !year || !grade) {
-      return res
-        .status(400)
-        .json(
-          new ApiError(
-            400,
-            "All fields (studentId, courseId, semester, year, grade) are required"
-          )
-        );
-    }
-
-    const result = await Teacher.uploadStudentMarks(
-      teacherId,
-      studentId,
-      courseId,
-      semester,
-      year,
-      grade
-    );
-    if (!result.success) {
-      return res.status(400).json(new ApiError(400, result.message));
-    }
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, null, "Marks updated successfully"));
-  } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Internal Server Error", [], error.stack));
-  }
-};
-
 export const assignGrade = async (req, res) => {
   try {
     const { studentId, courseId, secId, semester, year, grade } = req.body;
 
     if (!studentId || !courseId || !secId || !semester || !year || !grade) {
+      console.log("All fields are required");
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
 
@@ -162,6 +127,7 @@ export const assignGrade = async (req, res) => {
     );
 
     if (!result.success) {
+      console.log(result.message);
       return res.status(400).json(new ApiError(400, result.message));
     }
 

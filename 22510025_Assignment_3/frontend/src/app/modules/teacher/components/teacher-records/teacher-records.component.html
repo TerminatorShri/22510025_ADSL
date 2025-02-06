@@ -1,1 +1,73 @@
-<p>teacher-records works!</p>
+<div
+  class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl mx-auto relative"
+>
+  <h3
+    *ngIf="!selectedCourse"
+    class="text-xl font-semibold text-gray-700 text-center mb-4"
+  >
+    Teacher's Course Records
+  </h3>
+
+  <!-- Show Course List unless a course is selected -->
+  <div *ngIf="!selectedCourse" class="mb-6">
+    <div *ngFor="let course of courses" class="mb-6">
+      <div class="flex justify-between items-center">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">
+          {{ course.course_id }} - {{ course.course_title }}
+        </h4>
+
+        <!-- Assign Grades Button (aligned to the right) -->
+        <button
+          *ngIf="course.students.length > 0"
+          (click)="onCourseSelect(course)"
+          class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Assign Grades
+        </button>
+      </div>
+
+      <div *ngIf="course.students.length > 0; else noStudents">
+        <table class="min-w-full table-auto border-collapse mb-6">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 border-b text-left">Student ID</th>
+              <th class="py-2 px-4 border-b text-left">Student Name</th>
+              <th class="py-2 px-4 border-b text-left">Grade</th>
+              <th class="py-2 px-4 border-b text-left">Semester</th>
+              <th class="py-2 px-4 border-b text-left">Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of course.students">
+              <td class="py-2 px-4 border-b">{{ student.student_id }}</td>
+              <td class="py-2 px-4 border-b">{{ student.student_name }}</td>
+              <td class="py-2 px-4 border-b">{{ student.grade }}</td>
+              <td class="py-2 px-4 border-b">{{ student.semester }}</td>
+              <td class="py-2 px-4 border-b">{{ student.year }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noStudents>
+        <p class="text-center text-gray-500 mt-6">
+          No students found for this course.
+        </p>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Assign Grades Form Component -->
+  <div
+    *ngIf="selectedCourse"
+    class="fixed inset-0 bg-opacity-50 z-10 flex justify-center items-center ml-60"
+  >
+    <div class="rounded-lg w-full max-w-lg relative shadow-xl">
+      <app-assign-grades
+        [course]="selectedCourse"
+        (close)="closeGradeForm()"
+        (gradeAssigned)="refreshTeacherRecords()"
+      ></app-assign-grades>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,46 @@
-<div style="display: flex">
-  <div style="width: 200px; border-right: 1px solid #ccc; padding: 10px">
-    <button (click)="navigateTeacher('')">Teacher Profile</button><br />
-    <button (click)="navigateTeacher('records')">Teacher Records</button><br />
-    <button (click)="navigateTeacher('courses')">Teacher Schedule</button><br />
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-100 p-4 flex flex-col justify-between">
+    <div class="space-y-4">
+      <button
+        (click)="navigateTeacher('')"
+        [class.bg-blue-500]="activeRoute === ''"
+        [class.text-white]="activeRoute === ''"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Teacher Profile
+      </button>
+
+      <button
+        (click)="navigateTeacher('courses')"
+        [class.bg-blue-500]="activeRoute === 'courses'"
+        [class.text-white]="activeRoute === 'courses'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Course Schedule
+      </button>
+
+      <button
+        (click)="navigateTeacher('records')"
+        [class.bg-blue-500]="activeRoute === 'records'"
+        [class.text-white]="activeRoute === 'records'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Manage Students
+      </button>
+    </div>
+
+    <!-- Logout Button -->
+    <button
+      (click)="confirmLogout()"
+      class="w-full p-3 rounded-lg text-left bg-red-500 text-white hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
   </div>
-  <div style="flex-grow: 1; padding: 10px">
+
+  <!-- Content -->
+  <div class="flex-grow p-4 overflow-auto">
     <router-outlet></router-outlet>
   </div>
 </div>

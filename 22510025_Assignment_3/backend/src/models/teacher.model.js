@@ -59,7 +59,8 @@ const Teacher = {
           c.title AS course_title,
           t.semester,
           t.year,
-          t.grade
+          t.grade,
+          t.sec_id
       FROM teaches te
       INNER JOIN takes t ON te.course_id = t.course_id 
           AND te.sec_id = t.sec_id
@@ -72,40 +73,7 @@ const Teacher = {
     const [rows] = await dbInstance.execute(query, [teacherId]);
     return rows.length > 0 ? rows : null;
   },
-
-  uploadStudentMarks: async (
-    teacherId,
-    studentId,
-    courseId,
-    semester,
-    year,
-    grade
-  ) => {
-    const query = `
-      UPDATE takes 
-      SET grade = ?
-      WHERE ID = ? AND course_id = ? AND semester = ? AND year = ?
-      AND EXISTS (
-          SELECT 1 FROM teaches 
-          WHERE ID = ? AND course_id = ? AND semester = ? AND year = ?
-      );
-    `;
-    const [result] = await dbInstance.execute(query, [
-      grade,
-      studentId,
-      courseId,
-      semester,
-      year,
-      teacherId,
-      courseId,
-      semester,
-      year,
-    ]);
-
-    return result.affectedRows > 0
-      ? { success: true, message: "Marks updated successfully" }
-      : { success: false, message: "Failed to update marks" };
-  },
+  
   assignGradeToStudent: async (
     studentId,
     courseId,

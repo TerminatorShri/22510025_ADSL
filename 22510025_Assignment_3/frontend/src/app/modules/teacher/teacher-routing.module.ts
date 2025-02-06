@@ -5,6 +5,7 @@ import { TeacherProfileComponent } from './components/teacher-profile/teacher-pr
 import { TeacherScheduleComponent } from './components/teacher-schedule/teacher-schedule.component';
 import { TeacherRecordsComponent } from './components/teacher-records/teacher-records.component';
 import { AuthGuard } from '../../guards/auth.guard';
+import { AssignGradesComponent } from './components/assign-grades/assign-grades.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [AssignGradesComponent, RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
 export class TeacherRoutingModule {}

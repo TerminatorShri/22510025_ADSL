@@ -9,7 +9,7 @@ import { LogoutDialogComponent } from '../../../auth/components/logout-dialog/lo
   selector: 'app-student-layout',
   imports: [RouterOutlet],
   templateUrl: './student-layout.component.html',
-  styleUrl: './student-layout.component.css',
+  styleUrls: ['./student-layout.component.css'],
 })
 export class StudentLayoutComponent {
   activeRoute: string | undefined = '';

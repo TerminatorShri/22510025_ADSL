@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { TeacherProfileResponse } from '../components/teacher-profile/teacher-profile.model';
 import { TeacherScheduleResponse } from '../components/teacher-schedule/teacher-schedule.model';
 import { TeacherRecordsResponse } from '../components/teacher-records/teacher-records.model';
+import { GradeAssignment } from '../components/assign-grades/assign-grade.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,11 +39,15 @@ export class TeacherActionService {
   }
 
   getTeacherCourseRecords(
-    instructorId: string,
+    instructorId: string
   ): Observable<TeacherRecordsResponse> {
     const headers = this.getHttpHeaders(instructorId);
     return this.http.get<any>(`${this.API_URL}/students`, {
       headers,
     });
+  }
+
+  applyGrade(gradeAssignment: GradeAssignment): Observable<any> {
+    return this.http.post(`${this.API_URL}/assign-grade`, gradeAssignment);
   }
 }

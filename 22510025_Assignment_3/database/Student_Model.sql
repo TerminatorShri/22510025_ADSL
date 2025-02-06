@@ -48,18 +48,27 @@ SELECT DISTINCT
     p.course_id, 
     c.title AS course_title,
     i.name AS instructor_name,
-    c.credits  -- Include credits for each course
+    c.credits,  -- Include credits for each course
+    sec.sec_id,  -- Section ID from section table
+    sec.semester, -- Semester from section table
+    sec.year -- Year from section table
 FROM prereq p
 INNER JOIN takes t ON t.course_id = p.prereq_id  -- Find prerequisites the student has already taken
 INNER JOIN course c ON p.course_id = c.course_id -- Get the details of the next eligible course
 INNER JOIN teaches te ON te.course_id = c.course_id  -- Get the teaching assignment
 INNER JOIN instructor i ON i.ID = te.ID   -- Get the instructor's name
+INNER JOIN section sec ON sec.course_id = c.course_id -- Get section and semester details
 WHERE t.ID = '00128'  -- Student ID
 AND p.course_id NOT IN (  -- Exclude courses already taken by the student
     SELECT t.course_id
     FROM takes t
     WHERE t.ID = '00128'  -- Student ID
 );
+
+select * from takes;
+
+use assignment3;
+
 
 
 

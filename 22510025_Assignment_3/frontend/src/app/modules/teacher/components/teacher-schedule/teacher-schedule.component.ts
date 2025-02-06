@@ -6,16 +6,18 @@ import { selectUser } from '../../../../store/selectors/auth.selectors';
 import { CommonModule } from '@angular/common';
 import { TeacherActionService } from '../../services/teacher-action.service';
 import { Schedule, TeacherScheduleResponse } from './teacher-schedule.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-teacher-schedule',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './teacher-schedule.component.html',
-  styleUrl: './teacher-schedule.component.css',
+  styleUrls: ['./teacher-schedule.component.css'],
 })
 export class TeacherScheduleComponent {
   user$: Observable<User | null>;
   schedule: Schedule[] | null = null;
+  selectedSemester: string = 'Fall'; // Default selected semester
 
   constructor(
     private store: Store,
@@ -27,7 +29,7 @@ export class TeacherScheduleComponent {
   ngOnInit() {
     this.user$.subscribe((user) => {
       if (user?.instructor_id) {
-        this.fetchTeacherSchedule(user.instructor_id, 'Fall');
+        this.fetchTeacherSchedule(user.instructor_id, this.selectedSemester);
       }
     });
   }
@@ -41,11 +43,22 @@ export class TeacherScheduleComponent {
             '🚀 ~ TeacherScheduleComponent ~ this.teacherActionService.getTeacherSchedule ~ response:',
             response
           );
-          this.schedule = response.data;
+          this.schedule = response.data; 
         },
         error: (error) => {
           console.log('Error fetching teacher schedule:', error);
+          this.schedule = null;
         },
       });
+  }
+
+  onSemesterChange(semester: string) {
+    this.selectedSemester = semester; // Update selected semester
+    this.user$.subscribe((user) => {
+      if (user?.instructor_id) {
+        // Fetch the teacher schedule for the new semester
+        this.fetchTeacherSchedule(user.instructor_id, semester);
+      }
+    });
   }
 }

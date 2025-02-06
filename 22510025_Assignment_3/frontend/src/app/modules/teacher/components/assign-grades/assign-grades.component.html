@@ -1,0 +1,50 @@
+<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+  <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+    Assign Grades for {{ course.course_title }}
+  </h3>
+
+  <!-- Grade Form -->
+  <form [formGroup]="gradeForm" (ngSubmit)="onSubmit()">
+    <div class="mb-4">
+      <label for="studentId" class="block text-lg text-gray-700"
+        >Student ID</label
+      >
+      <input
+        type="text"
+        id="studentId"
+        formControlName="studentId"
+        class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+        placeholder="Enter Student ID"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label for="grade" class="block text-lg text-gray-700">Grade</label>
+      <input
+        type="text"
+        id="grade"
+        formControlName="grade"
+        class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+        placeholder="Enter Grade"
+      />
+    </div>
+
+    <!-- Buttons: Cancel and Submit -->
+    <div class="flex justify-between mt-4">
+      <button
+        (click)="cancel()"
+        type="button"
+        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Submit Grades
+      </button>
+    </div>
+  </form>
+</div>

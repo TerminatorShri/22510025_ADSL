@@ -6,11 +6,21 @@ export interface StudentMarks {
   semester: string;
   year: number;
   grade: string;
+  sec_id: string;
+}
+
+export interface CourseWithStudents {
+  course_id: string;
+  course_title: string;
+  semester: string;
+  year: number;
+  sec_id: string;
+  students: StudentMarks[]; // Students who are enrolled in this course
 }
 
 export interface TeacherRecordsResponse {
   statuscode: number;
   message: string;
   success: boolean;
-  data: StudentMarks[];
+  data: StudentMarks[]; // Array of student marks with course info
 }

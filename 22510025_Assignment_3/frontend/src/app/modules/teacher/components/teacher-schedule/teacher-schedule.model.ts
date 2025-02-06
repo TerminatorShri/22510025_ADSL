@@ -14,5 +14,5 @@ export interface TeacherScheduleResponse {
   statuscode: number;
   message: string;
   success: boolean;
-  data: Schedule[];
+  data: Schedule[] | null;
 }
