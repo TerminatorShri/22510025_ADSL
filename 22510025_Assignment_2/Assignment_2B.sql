@@ -2,19 +2,25 @@
 -- 1) Create Object Table with field name and a member function to count number of words in field 'name'
 CREATE OR REPLACE TYPE ObjectType AS OBJECT (
     name VARCHAR2(50),
-    MEMBER FUNCTION countNoOfWords RETURN NUMBER
+    MEMBER FUNCTION countNoOfWords(sep VARCHAR2) RETURN NUMBER
 );
+/
 
-CREATE OR REPLACE TYPE BODY ObjectType AS
-    MEMBER FUNCTION countNoOfWords RETURN NUMBER IS
+CREATE OR REPLACE TYPE BODY ObjectType AS 
+    MEMBER FUNCTION countNoOfWords(sep VARCHAR2) RETURN NUMBER IS
         word_count NUMBER := 0;
+        trimmed_name VARCHAR2(50);
     BEGIN
-        word_count := LENGTH(TRIM(name)) - LENGTH(REPLACE(TRIM(name), ' ', '')) + 1;
+        trimmed_name := TRIM(name);
         
-        IF TRIM(name) IS NULL THEN
-            word_count := 0;
+        IF trimmed_name IS NULL OR trimmed_name = '' THEN
+            RETURN 0;
         END IF;
-        
+
+        word_count := LENGTH(trimmed_name) 
+                      - LENGTH(REPLACE(trimmed_name, sep, '')) 
+                      + 1;
+
         RETURN word_count;
     END countNoOfWords;
 END;
@@ -23,11 +29,14 @@ END;
 CREATE TABLE ObjectTable OF ObjectType;
 
 INSERT INTO ObjectTable VALUES (ObjectType('Shreeyash Dongarkar'));
-INSERT INTO ObjectTable VALUES (ObjectType('Shreeyash Shripad Dongarkar'));
+INSERT INTO ObjectTable VALUES (ObjectType('Shreeyash,Shripad,Dongarkar'));
 INSERT INTO ObjectTable VALUES (ObjectType('Shreeyash'));
 INSERT INTO ObjectTable VALUES (ObjectType(' '));
 
-SELECT t.name, t.countNoOfWords() AS word_count
+SELECT t.name, t.countNoOfWords(' ') AS word_count_space
+FROM ObjectTable t;
+
+SELECT t.name, t.countNoOfWords(',') AS word_count_comma
 FROM ObjectTable t;
 
 -- 2) Create an address type with attributes address, city, state and pincode and also add 2 member functions to extract address based on given keyword and count number of words in each given field
