@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RegistrarLayoutComponent } from './layout/registrar-layout/registrar-layout.component';
-import { RegistrarManagementComponent } from './components/registrar-management/registrar-management.component';
+import { RegistrarStudentManagementComponent } from './components/registrar-student-management/registrar-student-management.component';
+import { RegistrarCourseManagementComponent } from './components/registrar-course-management/registrar-course-management.component';
 import { AuthGuard } from '../../guards/auth.guard';
 
 const routes: Routes = [
@@ -13,7 +14,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: RegistrarManagementComponent,
+        component: RegistrarStudentManagementComponent,
+      },
+      {
+        path: 'course-management',
+        component: RegistrarCourseManagementComponent,
       },
     ],
   },

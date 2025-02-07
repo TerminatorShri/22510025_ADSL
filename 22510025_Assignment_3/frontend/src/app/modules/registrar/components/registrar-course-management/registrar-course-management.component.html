@@ -1,0 +1,98 @@
+<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl mx-auto">
+  <h3 class="text-xl font-semibold text-gray-700 text-center mb-4">
+    Assign Time Slot to New Courses
+  </h3>
+
+  <!-- Course Selection -->
+  <div *ngIf="!selectedCourse">
+    <h4 class="text-lg font-semibold mb-2">New Courses Without Time Slot</h4>
+    <ul class="border rounded-md p-2">
+      <li
+        *ngFor="let course of courses"
+        class="cursor-pointer hover:bg-gray-100 p-2 rounded-md"
+        (click)="onSelectCourse(course)"
+      >
+        <span class="font-semibold">{{ course.course_title }}</span>
+        ({{ course.course_id }}) - {{ course.credits }} credits
+      </li>
+    </ul>
+  </div>
+
+  <!-- Time Slot Form -->
+  <div *ngIf="selectedCourse" class="bg-gray-100 p-4 rounded-md mt-4">
+    <h4 class="text-lg font-semibold mb-2">
+      Assign Time Slot to {{ selectedCourse.course_title }}
+    </h4>
+    <form [formGroup]="timeSlotForm" (ngSubmit)="onAddTimeSlot()">
+      <div class="grid grid-cols-2 gap-4">
+        <input
+          type="text"
+          placeholder="Section ID"
+          formControlName="secId"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Semester"
+          formControlName="semester"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="number"
+          placeholder="Year"
+          formControlName="year"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Time Slot ID"
+          formControlName="timeSlotId"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Day"
+          formControlName="day"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Start Time"
+          formControlName="startTime"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="End Time"
+          formControlName="endTime"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Building"
+          formControlName="building"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Room Number"
+          formControlName="roomNumber"
+          class="p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <button
+        type="submit"
+        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Assign Time Slot
+      </button>
+      <button
+        type="button"
+        (click)="cancel()"
+        class="mt-4 ml-2 bg-red-500 text-white px-4 py-2 rounded"
+      >
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
