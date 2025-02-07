@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { Grade, StudentGradesResponse } from './student-grades.model';
   templateUrl: './student-grades.component.html',
   styleUrl: './student-grades.component.css',
 })
-export class StudentGradesComponent {
+export class StudentGradesComponent implements OnInit {
   user$: Observable<User | null>;
   grades: Grade[] = [];
 

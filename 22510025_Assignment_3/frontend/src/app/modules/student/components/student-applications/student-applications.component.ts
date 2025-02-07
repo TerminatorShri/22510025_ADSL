@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
   templateUrl: './student-applications.component.html',
   styleUrl: './student-applications.component.css',
 })
-export class StudentApplicationsComponent {
+export class StudentApplicationsComponent implements OnInit {
   user$: Observable<User | null>;
   eligibleCourses: EligibleCourse[] | null = [];
   studentId: string | null = null;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { Department, HodProfileResponse } from './hod-profile.model';
   templateUrl: './hod-profile.component.html',
   styleUrl: './hod-profile.component.css',
 })
-export class HodProfileComponent {
+export class HodProfileComponent implements OnInit {
   user$: Observable<User | null>;
   departmentInfo: Department | null = null;
 

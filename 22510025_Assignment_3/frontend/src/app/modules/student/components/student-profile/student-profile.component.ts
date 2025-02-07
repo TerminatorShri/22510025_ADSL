@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { StudentInfo, StudentProfileResponse } from './student-profile.model';
   templateUrl: './student-profile.component.html',
   styleUrl: './student-profile.component.css',
 })
-export class StudentProfileComponent {
+export class StudentProfileComponent implements OnInit {
   user$: Observable<User | null>;
   studentInfo: StudentInfo | null = null;
 

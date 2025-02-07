@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -20,7 +20,7 @@ import Swal from 'sweetalert2';
   templateUrl: './hod-records.component.html',
   styleUrl: './hod-records.component.css',
 })
-export class HodRecordsComponent {
+export class HodRecordsComponent implements OnInit {
   user$: Observable<User | null>;
   courses: Course[] = [];
 

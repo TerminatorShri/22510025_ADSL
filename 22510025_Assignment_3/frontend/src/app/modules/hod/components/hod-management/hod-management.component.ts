@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -25,7 +25,7 @@ import {
   templateUrl: './hod-management.component.html',
   styleUrl: './hod-management.component.css',
 })
-export class HodManagementComponent {
+export class HodManagementComponent implements OnInit {
   user$: Observable<User | null>;
   changeSalaryForm!: FormGroup;
   addFundsForm!: FormGroup;

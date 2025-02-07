@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './teacher-schedule.component.html',
   styleUrls: ['./teacher-schedule.component.css'],
 })
-export class TeacherScheduleComponent {
+export class TeacherScheduleComponent implements OnInit {
   user$: Observable<User | null>;
   schedule: Schedule[] | null = null;
   selectedSemester: string = 'Fall'; // Default selected semester

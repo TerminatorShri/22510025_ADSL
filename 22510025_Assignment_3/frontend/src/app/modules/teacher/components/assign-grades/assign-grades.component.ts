@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { GradeAssignment, GradesCourseInput } from './assign-grade.model';
 import {
   FormBuilder,
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './assign-grades.component.html',
   styleUrl: './assign-grades.component.css',
 })
-export class AssignGradesComponent {
+export class AssignGradesComponent implements OnInit {
   @Input() course!: GradesCourseInput;
   @Output() close = new EventEmitter<void>();
   @Output() gradeAssigned = new EventEmitter<void>();

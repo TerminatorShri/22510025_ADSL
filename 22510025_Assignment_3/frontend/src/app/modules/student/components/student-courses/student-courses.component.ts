@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../../../../store/types/auth.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './student-courses.component.html',
   styleUrl: './student-courses.component.css',
 })
-export class StudentCoursesComponent {
+export class StudentCoursesComponent implements OnInit {
   user$: Observable<User | null>;
   courses: Course[] | null = [];
   selectedSemester: string = 'Fall';
