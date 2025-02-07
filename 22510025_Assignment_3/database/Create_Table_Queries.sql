@@ -114,3 +114,4 @@ CREATE TABLE timeslot (
     end_time TIME,
     PRIMARY KEY (time_slot_id, day, start_time)
 );
+
