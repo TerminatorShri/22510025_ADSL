@@ -2,16 +2,15 @@ import dbInstance from "../config/mysql.config.js";
 
 const Registrar = {
   // 1) Add a new student
-  addStudent: async (studentId, name, deptName, totCred) => {
+  addStudent: async (studentId, name, deptName) => {
     const query = `
       INSERT INTO student (ID, name, dept_name, tot_cred)
-      VALUES (?, ?, ?, ?);
+      VALUES (?, ?, ?, 0);
     `;
     const [result] = await dbInstance.execute(query, [
       studentId,
       name,
       deptName,
-      totCred,
     ]);
 
     return result.affectedRows > 0
@@ -20,14 +19,14 @@ const Registrar = {
   },
 
   // 2) Get new courses for a department that have not been assigned a time slot
-  getNewCoursesWithoutTimeSlot: async (deptName) => {
+  getNewCoursesWithoutTimeSlot: async () => {
     const query = `
       SELECT c.course_id, c.title AS course_title, c.credits
       FROM course c
       LEFT JOIN section s ON c.course_id = s.course_id
-      WHERE c.dept_name = ? AND s.course_id IS NULL;
+      WHERE s.course_id IS NULL;
     `;
-    const [rows] = await dbInstance.execute(query, [deptName]);
+    const [rows] = await dbInstance.execute(query);
     return rows.length > 0 ? rows : null;
   },
 

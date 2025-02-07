@@ -6,6 +6,7 @@ import studentRouter from "./routes/student.routes.js";
 import teacherRouter from "./routes/teacher.routes.js";
 import hodRouter from "./routes/hod.routes.js";
 import adminRouter from "./routes/admin.routes.js";
+import registrarRouter from "./routes/registrar.routes.js";
 import { authorizeRole } from "./middlewares/auth.middleware.js";
 
 const app = express();
@@ -23,5 +24,6 @@ app.use("/api/v1/student", studentRouter);
 app.use("/api/v1/instructor", teacherRouter);
 app.use("/api/v1/hod", hodRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/registrar", registrarRouter);
 
 export default app;

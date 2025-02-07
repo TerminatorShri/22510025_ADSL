@@ -4,19 +4,18 @@ import { ApiResponse, ApiError } from "../config/api.config.js";
 // Controller to add a new student
 export const addStudent = async (req, res) => {
   try {
-    const { studentId, name, deptName, totCred } = req.body;
+    const { studentId, name, deptName } = req.body;
+    console.log(req.body);
 
-    if (!studentId || !name || !deptName || !totCred) {
+    if (!studentId || !name || !deptName) {
+      console.log("All fields are required");
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
 
-    const result = await Registrar.addStudent(
-      studentId,
-      name,
-      deptName,
-      totCred
-    );
+    const result = await Registrar.addStudent(studentId, name, deptName);
+
     if (!result.success) {
+      console.log("here");
       return res.status(400).json(new ApiError(400, result.message));
     }
 
@@ -33,15 +32,7 @@ export const addStudent = async (req, res) => {
 // Controller to get new courses for a department
 export const getNewCoursesWithoutTimeSlot = async (req, res) => {
   try {
-    const deptName = req.headers["dept-name"]; // Extract department name from headers
-
-    if (!deptName) {
-      return res
-        .status(400)
-        .json(new ApiError(400, "Department name is required"));
-    }
-
-    const courses = await Registrar.getNewCoursesWithoutTimeSlot(deptName);
+    const courses = await Registrar.getNewCoursesWithoutTimeSlot();
     if (!courses) {
       return res
         .status(404)
