@@ -1,1 +1,95 @@
-<p>admin-management works!</p>
+<div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl mx-auto">
+  <h3 class="text-xl font-semibold text-gray-700 text-center mb-6">
+    Admin Management
+  </h3>
+
+  <div class="grid grid-cols-2 gap-6">
+    <!-- Add Department Form -->
+    <div class="bg-gray-100 p-4 rounded-lg">
+      <h4 class="text-lg font-semibold mb-2">Add New Department</h4>
+      <form [formGroup]="addDepartmentForm" (ngSubmit)="onAddDepartment()">
+        <div class="mb-3">
+          <label class="block text-gray-700">Department Name</label>
+          <input
+            formControlName="deptName"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Department Name"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-gray-700">Building</label>
+          <input
+            formControlName="building"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Building Name"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-gray-700">Budget</label>
+          <input
+            formControlName="budget"
+            type="number"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Budget Amount"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
+          [disabled]="addDepartmentForm.invalid"
+        >
+          Add Department
+        </button>
+      </form>
+    </div>
+
+    <!-- Add Building & Room Form -->
+    <div class="bg-gray-100 p-4 rounded-lg">
+      <h4 class="text-lg font-semibold mb-2">Add New Building & Room</h4>
+      <form [formGroup]="addBuildingRoomForm" (ngSubmit)="onAddBuildingRoom()">
+        <div class="mb-3">
+          <label class="block text-gray-700">Building Name</label>
+          <input
+            formControlName="building"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Building Name"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-gray-700">Room Number</label>
+          <input
+            formControlName="roomNumber"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Room Number"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-gray-700">Capacity</label>
+          <input
+            formControlName="capacity"
+            type="number"
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter Room Capacity"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 w-full"
+          [disabled]="addBuildingRoomForm.invalid"
+        >
+          Add Building & Room
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
