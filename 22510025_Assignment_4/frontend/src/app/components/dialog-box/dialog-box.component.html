@@ -1,0 +1,23 @@
+<div class="fixed inset-0 flex items-center justify-center bg-opacity-50">
+  <div
+    class="bg-white p-6 rounded-lg shadow-lg w-80 flex flex-col items-center"
+  >
+    <h2 class="text-lg font-bold mb-4 text-center">{{ data.title }}</h2>
+    <p class="text-gray-600 mb-4 text-center">{{ data.message }}</p>
+
+    <div class="flex justify-between w-full">
+      <button
+        (click)="cancel()"
+        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 w-1/2 mx-1"
+      >
+        {{ data.cancelText }}
+      </button>
+      <button
+        (click)="confirm()"
+        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-1/2 mx-1"
+      >
+        {{ data.confirmText }}
+      </button>
+    </div>
+  </div>
+</div>
