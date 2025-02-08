@@ -1,0 +1,54 @@
+<div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
+    Completed Exams
+  </h2>
+
+  <!-- No Exams Fallback -->
+  <div *ngIf="completedExams.length === 0" class="text-center text-gray-500">
+    No completed exams found.
+  </div>
+
+  <!-- Completed Exams List -->
+  <div
+    *ngFor="let exam of completedExams"
+    class="border p-4 rounded-lg mb-4 shadow-sm"
+  >
+    <h3 class="text-lg font-semibold text-gray-800">{{ exam.title }}</h3>
+    <p class="text-gray-600">{{ exam.description }}</p>
+
+    <div class="grid grid-cols-2 gap-4 mt-2">
+      <p class="text-sm">
+        <strong>Total Marks:</strong> {{ exam.total_marks }}
+      </p>
+      <p class="text-sm"><strong>Score:</strong> {{ exam.total_score }}</p>
+      <p class="text-sm">
+        <strong>Duration:</strong> {{ exam.duration_minutes }} mins
+      </p>
+      <p class="text-sm">
+        <strong>Status:</strong>
+        <span
+          [ngClass]="{
+            'text-green-500': exam.result_status === 'passed',
+            'text-red-500': exam.result_status === 'failed'
+          }"
+        >
+          {{ exam.result_status }}
+        </span>
+      </p>
+    </div>
+
+    <p class="text-sm text-gray-500 mt-1">
+      <strong>Start Time:</strong> {{ exam.start_time | date : "medium" }}
+    </p>
+
+    <!-- View Exam Button -->
+    <div class="mt-4 text-center">
+      <button
+        (click)="viewExamDetails(exam.id)"
+        class="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+      >
+        View Exam
+      </button>
+    </div>
+  </div>
+</div>

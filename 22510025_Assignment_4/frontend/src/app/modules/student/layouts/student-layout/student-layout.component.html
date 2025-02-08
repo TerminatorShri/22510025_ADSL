@@ -1,1 +1,47 @@
-<p>student-layout works!</p>
+<div class="min-h-screen bg-gray-100 p-6 relative">
+  <!-- Header Section (Remains Same) -->
+  <div
+    class="flex justify-between items-center bg-white p-4 shadow-md rounded-lg"
+  >
+    <h1 class="text-2xl font-bold text-gray-800">
+      Hello, {{ (user$ | async)?.username }}
+    </h1>
+
+    <button
+      (click)="openLogoutDialog()"
+      class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
+  </div>
+
+  <!-- Navigation Tabs (Flat Style, No Shadow) -->
+  <div class="bg-gray-100 mt-4 border-b border-gray-300">
+    <div class="flex justify-between px-4 py-2">
+      <button
+        (click)="navigateStudent('')"
+        class="pb-2 text-lg font-semibold w-1/2 text-center border-b-2"
+        [class.text-blue-500]="activeRoute === ''"
+        [class.border-blue-500]="activeRoute === ''"
+        [class.border-transparent]="activeRoute !== ''"
+      >
+        Assigned Exams
+      </button>
+
+      <button
+        (click)="navigateStudent('completed')"
+        class="pb-2 text-lg font-semibold w-1/2 text-center border-b-2"
+        [class.text-blue-500]="activeRoute === 'completed'"
+        [class.border-blue-500]="activeRoute === 'completed'"
+        [class.border-transparent]="activeRoute !== 'completed'"
+      >
+        Completed Exams
+      </button>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="flex-grow p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

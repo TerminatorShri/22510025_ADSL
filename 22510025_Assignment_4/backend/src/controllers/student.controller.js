@@ -1,125 +1,102 @@
 import Student from "../models/student.model.js";
-import { ApiResponse, ApiError } from "../config/api.config.js";
 
-export const getAssignedExams = async (req, res) => {
+/**
+ * Get unattempted exams for a student
+ */
+export const getUnattemptedExams = async (req, res) => {
   try {
     const { studentId } = req.params;
-
-    if (!studentId) {
-      return res.status(400).json(new ApiError(400, "Student ID is required"));
-    }
-
-    const exams = await Student.getAssignedExams(studentId);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, exams, "Assigned exams retrieved successfully")
-      );
+    const exams = await Student.getUnattemptedExams(studentId);
+    res.status(200).json({
+      success: true,
+      message: "Unattempted exams retrieved successfully",
+      data: exams,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Server error", [], error.stack));
+    console.error("Error fetching unattempted exams:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
+/**
+ * Get attempted exams for a student
+ */
+export const getAttemptedExams = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const exams = await Student.getAttemptedExams(studentId);
+    res.status(200).json({
+      success: true,
+      message: "Attempted exams retrieved successfully",
+      data: exams,
+    });
+  } catch (error) {
+    console.error("Error fetching attempted exams:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+/**
+ * Start an exam for a student
+ */
 export const startExam = async (req, res) => {
   try {
     const { studentId, examId } = req.body;
-
-    if (!studentId || !examId) {
-      return res
-        .status(400)
-        .json(new ApiError(400, "Student ID and Exam ID are required"));
-    }
-
-    const result = await Student.startExam(studentId, examId);
-    if (!result.success) {
-      return res.status(400).json(new ApiError(400, result.message));
-    }
-
-    return res
-      .status(201)
-      .json(
-        new ApiResponse(201, { attemptId: result.attemptId }, result.message)
-      );
+    const response = await Student.startExam(studentId, examId);
+    res.status(200).json(response);
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Server error", [], error.stack));
+    console.error("Error starting exam:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-export const submitAnswer = async (req, res) => {
+/**
+ * Get questions for a specific exam
+ */
+export const getExamQuestions = async (req, res) => {
   try {
-    const { attemptId, questionId, selectedOption } = req.body;
-
-    if (!attemptId || !questionId || !selectedOption) {
-      return res.status(400).json(new ApiError(400, "All fields are required"));
-    }
-
-    const result = await Student.submitAnswer(
-      attemptId,
-      questionId,
-      selectedOption
-    );
-    if (!result.success) {
-      return res.status(400).json(new ApiError(400, result.message));
-    }
-
-    return res.status(201).json(new ApiResponse(201, null, result.message));
+    const { examId } = req.params;
+    const questions = await Student.getExamQuestions(examId);
+    res.status(200).json({
+      success: true,
+      message: "Exam questions retrieved successfully",
+      data: questions,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Server error", [], error.stack));
+    console.error("Error fetching exam questions:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-export const finishExam = async (req, res) => {
+/**
+ * Submit all answers at once for an exam
+ */
+export const submitExamAnswers = async (req, res) => {
   try {
-    const { attemptId } = req.params;
-
-    if (!attemptId) {
-      return res.status(400).json(new ApiError(400, "Attempt ID is required"));
-    }
-
-    const result = await Student.finishExam(attemptId);
-    if (!result.success) {
-      return res.status(400).json(new ApiError(400, result.message));
-    }
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { score: result.score, status: result.status },
-          result.message
-        )
-      );
+    const { attemptId, answers } = req.body;
+    const response = await Student.submitExamAnswers(attemptId, answers);
+    res.status(200).json(response);
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Server error", [], error.stack));
+    console.error("Error submitting answers:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-export const getStudentResults = async (req, res) => {
+/**
+ * Get details of an attempted exam
+ */
+export const getAttemptedExamDetails = async (req, res) => {
   try {
-    const { studentId } = req.params;
-
-    if (!studentId) {
-      return res.status(400).json(new ApiError(400, "Student ID is required"));
-    }
-
-    const results = await Student.getStudentResults(studentId);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, results, "Student results retrieved successfully")
-      );
+    const { studentId, examId } = req.params;
+    console.log(studentId, examId);
+    const examDetails = await Student.getAttemptedQuestions(studentId, examId);
+    res.status(200).json({
+      success: true,
+      message: "Attempted exam details retrieved successfully",
+      data: examDetails,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Server error", [], error.stack));
+    console.error("Error fetching attempted exam details:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

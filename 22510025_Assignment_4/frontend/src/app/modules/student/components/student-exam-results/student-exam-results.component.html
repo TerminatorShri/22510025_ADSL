@@ -1,0 +1,123 @@
+<div class="min-h-screen bg-gray-100 p-6 relative">
+  <!-- Header Section -->
+  <div
+    class="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-6"
+  >
+    <!-- Go Back Button -->
+    <button
+      (click)="goBack()"
+      class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+    >
+      ⬅ Go Back
+    </button>
+    <!-- Exam Title -->
+    <h1 class="text-2xl font-bold text-gray-800">
+      {{ examId ? "Exam Results" : "Loading..." }}
+    </h1>
+  </div>
+
+  <!-- Exam Results Section -->
+  <div *ngIf="examId">
+    <!-- Exam Details -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+      <h2 class="text-xl font-semibold text-gray-800">
+        {{ attemptedExamDetails[0].exam_title }}
+      </h2>
+      <p class="text-gray-600 mt-2">
+        Course: {{ attemptedExamDetails[0].course_name }} ({{
+          attemptedExamDetails[0].course_code
+        }})
+      </p>
+      <p class="text-gray-500 mt-2">
+        Total Marks:
+        <span class="font-semibold">{{
+          attemptedExamDetails[0].exam_total_marks
+        }}</span>
+        | Duration:
+        <span class="font-semibold"
+          >{{ attemptedExamDetails[0].exam_duration_minutes }} mins</span
+        >
+        | Start Time:
+        <span class="font-semibold">{{
+          attemptedExamDetails[0].exam_start_time | date : "medium"
+        }}</span>
+      </p>
+    </div>
+
+    <!-- Questions & Answers Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <div
+        *ngFor="let exam of attemptedExamDetails; let i = index"
+        class="mb-4 border-b pb-4"
+      >
+        <div class="flex justify-between">
+          <!-- Question -->
+          <div class="w-1/2">
+            <p class="text-lg font-medium">{{ exam.question_text }}</p>
+            <div class="mt-2 space-x-4">
+              <label class="inline-flex items-center">
+                <input
+                  type="radio"
+                  disabled
+                  [checked]="exam.selected_option === 'A'"
+                  class="form-radio text-blue-600"
+                />
+                <span class="ml-2">A. {{ exam.option_a }}</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input
+                  type="radio"
+                  disabled
+                  [checked]="exam.selected_option === 'B'"
+                  class="form-radio text-blue-600"
+                />
+                <span class="ml-2">B. {{ exam.option_b }}</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input
+                  type="radio"
+                  disabled
+                  [checked]="exam.selected_option === 'C'"
+                  class="form-radio text-blue-600"
+                />
+                <span class="ml-2">C. {{ exam.option_c }}</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input
+                  type="radio"
+                  disabled
+                  [checked]="exam.selected_option === 'D'"
+                  class="form-radio text-blue-600"
+                />
+                <span class="ml-2">D. {{ exam.option_d }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Selected Answer & Correct Answer -->
+          <div class="w-1/2 text-right">
+            <p class="text-sm font-semibold">
+              Selected Answer:
+              <span
+                [ngClass]="{
+                  'text-green-500': exam.is_correct,
+                  'text-red-500': !exam.is_correct
+                }"
+                >{{ exam.selected_option }}</span
+              >
+            </p>
+            <p class="text-sm text-gray-500">
+              Correct Answer:
+              <span class="text-blue-600">{{ exam.correct_option }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader or Error Handling if examId is invalid or data isn't loaded yet -->
+  <div *ngIf="!examId" class="text-center text-gray-500">
+    Loading exam results...
+  </div>
+</div>
