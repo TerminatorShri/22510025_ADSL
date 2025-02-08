@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-gray-100 p-6 relative">
+  <!-- Header Section -->
+  <div
+    class="flex justify-between items-center bg-white p-4 shadow-md rounded-lg"
+  >
+    <h1 class="text-2xl font-bold text-gray-800">Exams</h1>
+    <div class="flex space-x-4">
+      <button
+        (click)="openNewExamForm()"
+        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+      >
+        + Add Exam
+      </button>
+      <button
+        (click)="openLogoutDialog()"
+        class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Exam List -->
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      *ngFor="let exam of teacherExams"
+      class="bg-white shadow-lg rounded-lg p-5 cursor-pointer hover:shadow-xl transition"
+      (click)="openExamDashboard(exam.id)"
+    >
+      <h3 class="text-xl font-semibold text-gray-800">{{ exam.title }}</h3>
+      <p class="text-gray-600 mt-2">{{ exam.description }}</p>
+      <p class="text-gray-500 text-sm mt-1">
+        Total Marks: <span class="font-semibold">{{ exam.total_marks }}</span> |
+        Duration:
+        <span class="font-semibold">{{ exam.duration_minutes }} mins</span>
+      </p>
+      <p class="text-sm mt-1">
+        Status:
+        <span
+          class="font-bold"
+          [ngClass]="{
+            'text-green-500': exam.status === 'completed',
+            'text-yellow-500': exam.status === 'upcoming',
+            'text-blue-500': exam.status === 'ongoing'
+          }"
+        >
+          {{ exam.status }}
+        </span>
+      </p>
+      <p class="text-sm text-gray-500 mt-1">
+        Start Time: {{ exam.start_time | date : "medium" }}
+      </p>
+    </div>
+  </div>
+
+  <!-- New Exam Form (Overlay) -->
+  <div
+    *ngIf="showNewExamForm"
+    class="fixed inset-0 flex items-center justify-center backdrop-blur-md z-50"
+  >
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 flex flex-col relative">
+      <button
+        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        (click)="closeNewExamForm()"
+      >
+        ✖
+      </button>
+      <h2 class="text-lg font-bold mb-4 text-center">Create New Exam</h2>
+
+      <form [formGroup]="examForm" (ngSubmit)="createExam()">
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Exam Title"
+          class="w-full p-2 border border-gray-300 rounded mb-2"
+          required
+        />
+
+        <input
+          type="text"
+          formControlName="description"
+          placeholder="Description"
+          class="w-full p-2 border border-gray-300 rounded mb-2"
+          required
+        />
+
+        <input
+          type="number"
+          formControlName="total_marks"
+          placeholder="Total Marks"
+          class="w-full p-2 border border-gray-300 rounded mb-2"
+          required
+        />
+
+        <input
+          type="datetime-local"
+          formControlName="start_time"
+          class="w-full p-2 border border-gray-300 rounded mb-2"
+          required
+        />
+
+        <input
+          type="number"
+          formControlName="duration_minutes"
+          placeholder="Duration (mins)"
+          class="w-full p-2 border border-gray-300 rounded mb-4"
+          required
+        />
+
+        <button
+          type="submit"
+          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+          [disabled]="examForm.invalid"
+        >
+          Create Exam
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

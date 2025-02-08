@@ -1,0 +1,101 @@
+<div *ngIf="examForm" class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">
+    Exam Information
+  </h2>
+
+  <form [formGroup]="examForm">
+    <!-- Title & Total Marks Side by Side -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-gray-700">Title</label>
+        <input
+          type="text"
+          formControlName="title"
+          class="w-full p-2 border rounded"
+          [readonly]="!isEditing"
+        />
+      </div>
+
+      <div>
+        <label class="block text-gray-700">Total Marks</label>
+        <input
+          type="number"
+          formControlName="total_marks"
+          class="w-full p-2 border rounded"
+          [readonly]="!isEditing"
+        />
+      </div>
+    </div>
+
+    <!-- Description (Full Width) -->
+    <label class="block text-gray-700 mt-3">Description</label>
+    <textarea
+      formControlName="description"
+      class="w-full p-2 border rounded"
+      [readonly]="!isEditing"
+    ></textarea>
+
+    <!-- Start Time & Duration Side by Side -->
+    <div class="grid grid-cols-2 gap-4 mt-3">
+      <div>
+        <label class="block text-gray-700">Start Time</label>
+        <input
+          type="datetime-local"
+          formControlName="start_time"
+          class="w-full p-2 border rounded"
+          [readonly]="!isEditing"
+        />
+      </div>
+
+      <div>
+        <label class="block text-gray-700">Duration (minutes)</label>
+        <input
+          type="number"
+          formControlName="duration_minutes"
+          class="w-full p-2 border rounded"
+          [readonly]="!isEditing"
+        />
+      </div>
+    </div>
+
+    <!-- Status & Course Info Side by Side -->
+    <div class="grid grid-cols-2 gap-4 mt-3">
+      <div>
+        <label class="block text-gray-700">Status</label>
+        <select formControlName="status" class="w-full p-2 border rounded">
+          <option *ngFor="let status of statusOptions" [value]="status">
+            {{ status }}
+          </option>
+        </select>
+      </div>
+
+      <div class="bg-gray-100 p-3 rounded">
+        <p class="text-gray-700 text-center">
+          <strong>Course:</strong> {{ examForm.get("course_name")?.value }} ({{
+            examForm.get("course_code")?.value
+          }})
+        </p>
+      </div>
+    </div>
+
+    <!-- Buttons (Centered) -->
+    <div class="mt-6 flex justify-center space-x-4">
+      <button
+        type="button"
+        (click)="toggleEditMode()"
+        class="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+      >
+        {{ isEditing ? "Cancel" : "Update" }}
+      </button>
+
+      <button
+        *ngIf="isEditing"
+        type="button"
+        (click)="saveChanges()"
+        class="px-6 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+</div>

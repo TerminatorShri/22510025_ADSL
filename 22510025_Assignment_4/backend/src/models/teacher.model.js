@@ -1,32 +1,6 @@
 import dbInstance from "../config/mysql.config.js";
 
 const Teacher = {
-  // Add a new course
-  addCourse: async (teacherId, courseName, courseCode) => {
-    const checkQuery = "SELECT COUNT(*) AS count FROM courses WHERE code = ?";
-    const [checkResult] = await dbInstance.execute(checkQuery, [courseCode]);
-
-    if (checkResult[0].count > 0) {
-      return { success: false, message: "Course code already exists" };
-    }
-
-    const query =
-      "INSERT INTO courses (name, code, created_by) VALUES (?, ?, ?)";
-    const [rows] = await dbInstance.execute(query, [
-      courseName,
-      courseCode,
-      teacherId,
-    ]);
-
-    return rows.affectedRows > 0
-      ? {
-          success: true,
-          message: "Course added successfully",
-          courseId: rows.insertId,
-        }
-      : { success: false, message: "Failed to add course" };
-  },
-
   // Create a new exam
   createExam: async (
     teacherId,
@@ -50,21 +24,132 @@ const Teacher = {
     ]);
 
     if (rows.affectedRows > 0) {
-      const updateQuery =
-        "UPDATE teachers SET exam_ids = JSON_ARRAY_APPEND(exam_ids, '$', ?) WHERE id = ?";
-      await dbInstance.execute(updateQuery, [rows.insertId, teacherId]);
       return {
         success: true,
-        message: "Exam created successfully",
         examId: rows.insertId,
+        message: "Exam created successfully",
       };
-    } else {
-      return { success: false, message: "Failed to create exam" };
     }
+    return { success: false, message: "Failed to create exam" };
+  },
+
+  // Get all exams created by a specific teacher
+  getExamsByTeacher: async (teacherId) => {
+    const query = `SELECT id, title, description, total_marks, start_time, duration_minutes, status
+                   FROM exams WHERE created_by = ?`;
+    const [rows] = await dbInstance.execute(query, [teacherId]);
+    return rows;
+  },
+
+  // Get full details of a specific exam
+  getExamDetails: async (examId) => {
+    const query = `SELECT e.id, e.title, e.description, e.total_marks, e.start_time, e.duration_minutes, e.status, 
+                          c.id AS course_id, c.name AS course_name, c.code AS course_code, 
+                          e.question_ids, e.assigned_students
+                   FROM exams e
+                   JOIN courses c ON e.course_id = c.id
+                   WHERE e.id = ?`;
+    const [rows] = await dbInstance.execute(query, [examId]);
+    return rows.length > 0 ? rows[0] : null;
+  },
+
+  // Update exam details
+  updateExam: async (
+    examId,
+    title,
+    description,
+    totalMarks,
+    startTime,
+    durationMinutes,
+    status
+  ) => {
+    // First, check if the exam exists
+    const checkQuery = "SELECT COUNT(*) AS count FROM exams WHERE id = ?";
+    const [checkResult] = await dbInstance.execute(checkQuery, [examId]);
+
+    if (checkResult[0].count === 0) {
+      return { success: false, message: "Exam not found" };
+    }
+
+    // Update the exam details
+    const query = `UPDATE exams 
+                   SET title = ?, 
+                       description = ?, 
+                       total_marks = ?, 
+                       start_time = ?, 
+                       duration_minutes = ?, 
+                       status = ?
+                   WHERE id = ?`;
+
+    const [rows] = await dbInstance.execute(query, [
+      title,
+      description,
+      totalMarks,
+      startTime,
+      durationMinutes,
+      status,
+      examId,
+    ]);
+
+    return rows.affectedRows > 0
+      ? { success: true, message: "Exam updated successfully" }
+      : { success: false, message: "No changes made to the exam" };
+  },
+
+  // Get all questions of an exam
+  getExamQuestions: async (examId) => {
+    // Step 1: Fetch question_ids JSON array
+    const queryFetchIds = `SELECT JSON_LENGTH(question_ids) AS num_questions FROM exams WHERE id = ?`;
+    const [result] = await dbInstance.execute(queryFetchIds, [examId]);
+
+    if (!result.length || result[0].num_questions === 0) {
+      return []; // No questions assigned
+    }
+
+    const numQuestions = result[0].num_questions;
+
+    // Step 2: Dynamically build the SQL query based on JSON array length
+    let query = `
+      SELECT q.id, q.question_text, q.option_a, q.option_b, q.option_c, q.option_d, 
+             q.correct_option, q.image_url, q.difficulty 
+      FROM questions q 
+      WHERE q.id IN (
+    `;
+
+    const unionParts = [];
+    for (let i = 0; i < numQuestions; i++) {
+      unionParts.push(
+        `SELECT JSON_UNQUOTE(JSON_EXTRACT(question_ids, '$[${i}]')) FROM exams WHERE id = ?`
+      );
+    }
+
+    query += unionParts.join(" UNION ALL ") + ")";
+
+    // Step 3: Execute the query with the examId
+    const [rows] = await dbInstance.execute(
+      query,
+      Array(numQuestions).fill(examId)
+    );
+    return rows;
+  },
+
+  // Get exam results
+  getExamResults: async (examId) => {
+    const query = `SELECT s.user_id, er.total_score, er.status
+                   FROM exam_results er
+                   JOIN students s ON er.student_id = s.id
+                   JOIN users u ON s.user_id = u.id
+                   WHERE er.exam_id = ?`;
+    const [rows] = await dbInstance.execute(query, [examId]);
+    return rows;
   },
 
   // Assign students to an exam
   assignStudentsToExam: async (examId, studentIds) => {
+    if (!studentIds.length) {
+      return { success: false, message: "No students provided for assignment" };
+    }
+
     // Convert studentIds array to a JSON string
     const studentIdsJSON = JSON.stringify(studentIds);
 
@@ -77,102 +162,14 @@ const Teacher = {
       : { success: false, message: "Failed to assign students to exam" };
   },
 
-  // Add question to an exam (with optional image)
-  addQuestionToExam: async (
-    examId,
-    questionText,
-    optionA,
-    optionB,
-    optionC,
-    optionD,
-    correctOption,
-    difficulty,
-    imageUrl,
-    courseId,
-    teacherId
-  ) => {
-    const insertQuestionQuery = `INSERT INTO questions (course_id, created_by, question_text, option_a, option_b, option_c, option_d, correct_option, difficulty, image_url) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const [questionRows] = await dbInstance.execute(insertQuestionQuery, [
-      courseId,
-      teacherId,
-      questionText,
-      optionA,
-      optionB,
-      optionC,
-      optionD,
-      correctOption,
-      difficulty,
-      imageUrl,
-    ]);
-
-    if (questionRows.affectedRows > 0) {
-      const questionId = questionRows.insertId;
-      const updateExamQuery =
-        "UPDATE exams SET question_ids = JSON_ARRAY_APPEND(question_ids, '$', ?) WHERE id = ?";
-      await dbInstance.execute(updateExamQuery, [questionId, examId]);
-
-      return {
-        success: true,
-        message: "Question added successfully",
-        questionId,
-      };
-    } else {
-      return { success: false, message: "Failed to add question" };
-    }
-  },
-
-  // View exam results (for all students in an exam)
-  getExamResults: async (examId) => {
-    const query = `SELECT s.user_id, u.username, er.total_score, er.status
-                   FROM exam_results er
-                   JOIN students s ON er.student_id = s.id
-                   JOIN users u ON s.user_id = u.id
-                   WHERE er.exam_id = ?`;
+  // Get assigned students for an exam
+  getAssignedStudents: async (examId) => {
+    const query = `SELECT u.id, u.username, u.email 
+                   FROM users u
+                   JOIN students s ON u.id = s.user_id
+                   WHERE JSON_CONTAINS((SELECT assigned_students FROM exams WHERE id = ?), JSON_QUOTE(s.id))`;
     const [rows] = await dbInstance.execute(query, [examId]);
     return rows;
-  },
-
-  // Get results for a specific student
-  getStudentResults: async (studentId) => {
-    const query = `SELECT er.exam_id, e.title, e.total_marks, er.total_score, er.status
-                   FROM exam_results er
-                   JOIN exams e ON er.exam_id = e.id
-                   WHERE er.student_id = ?`;
-    const [rows] = await dbInstance.execute(query, [studentId]);
-    return rows;
-  },
-
-  // Update an existing question (including image URL)
-  updateQuestion: async (
-    questionId,
-    questionText,
-    optionA,
-    optionB,
-    optionC,
-    optionD,
-    correctOption,
-    difficulty,
-    imageUrl
-  ) => {
-    const query = `UPDATE questions 
-                   SET question_text = ?, option_a = ?, option_b = ?, option_c = ?, option_d = ?, correct_option = ?, difficulty = ?, image_url = ?
-                   WHERE id = ?`;
-    const [rows] = await dbInstance.execute(query, [
-      questionText,
-      optionA,
-      optionB,
-      optionC,
-      optionD,
-      correctOption,
-      difficulty,
-      imageUrl,
-      questionId,
-    ]);
-
-    return rows.affectedRows > 0
-      ? { success: true, message: "Question updated successfully" }
-      : { success: false, message: "Failed to update question" };
   },
 };
 

@@ -14,8 +14,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/teachers", teacherRouter);
-app.use("/api/v1/students", studentRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/teacher", teacherRouter);
+app.use("/api/v1/student", studentRouter);
 
 export default app;

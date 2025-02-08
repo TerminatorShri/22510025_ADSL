@@ -1,0 +1,54 @@
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-100 p-4 flex flex-col justify-between">
+    <div class="space-y-4">
+      <!-- Go Back Button -->
+      <button
+        (click)="goBack()"
+        class="w-full p-3 rounded-lg text-left bg-gray-300 hover:bg-gray-400 transition flex items-center"
+      >
+        ⬅ Go Back
+      </button>
+
+      <button
+        (click)="navigateTeacher('')"
+        [class.bg-blue-500]="activeRoute === ''"
+        [class.text-white]="activeRoute === ''"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Exam Info
+      </button>
+
+      <button
+        (click)="navigateTeacher('questions')"
+        [class.bg-blue-500]="activeRoute === 'questions'"
+        [class.text-white]="activeRoute === 'questions'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Exam Questions
+      </button>
+
+      <button
+        (click)="navigateTeacher('results')"
+        [class.bg-blue-500]="activeRoute === 'results'"
+        [class.text-white]="activeRoute === 'results'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Exam Results
+      </button>
+    </div>
+
+    <!-- Logout Button -->
+    <button
+      (click)="openLogoutDialog()"
+      class="w-full p-3 rounded-lg text-left bg-red-500 text-white hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-grow p-4 overflow-auto">
+    <router-outlet></router-outlet>
+  </div>
+</div>

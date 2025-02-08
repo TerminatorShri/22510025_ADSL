@@ -1,22 +1,24 @@
 import express from "express";
 import {
-  addCourse,
   createExam,
-  assignStudentsToExam,
-  addQuestionToExam,
-  updateQuestion,
+  getExamsByTeacher,
+  getExamDetails,
+  updateExam,
+  getExamQuestions,
   getExamResults,
-  getStudentResults,
+  assignStudentsToExam,
+  getAssignedStudents,
 } from "../controllers/teacher.controller.js";
 
 const router = express.Router();
 
-router.post("/course", addCourse);
-router.post("/exam", createExam);
-router.post("/exam/assign-students", assignStudentsToExam);
-router.post("/exam/add-question", addQuestionToExam);
-router.put("/question/:questionId", updateQuestion);
+router.post("/create", createExam);
+router.get("/:teacherId/exams", getExamsByTeacher);
+router.get("/exam/:examId", getExamDetails);
+router.put("/exam/:examId", updateExam);
+router.get("/exam/:examId/questions", getExamQuestions);
 router.get("/exam/:examId/results", getExamResults);
-router.get("/student/:studentId/results", getStudentResults);
+router.post("/exam/assign-students", assignStudentsToExam);
+router.get("/exam/:examId/assigned-students", getAssignedStudents);
 
 export default router;

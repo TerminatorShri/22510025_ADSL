@@ -1,0 +1,205 @@
+<div class="max-w-5xl mx-auto bg-white p-8 rounded shadow">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">Exam Questions</h2>
+
+  <!-- Loop through existing questions -->
+  <div
+    *ngFor="let question of examQuestions; let i = index"
+    class="mb-8 border p-6 rounded-lg shadow"
+  >
+    <form [formGroup]="questionForms[i]">
+      <label class="block text-gray-700 font-semibold text-lg">Question:</label>
+      <textarea
+        formControlName="question_text"
+        class="w-full p-3 border rounded-lg"
+      ></textarea>
+
+      <label class="block text-gray-700 mt-4 text-lg">Options:</label>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">A.</label>
+          <input
+            type="text"
+            formControlName="option_a"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">B.</label>
+          <input
+            type="text"
+            formControlName="option_b"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">C.</label>
+          <input
+            type="text"
+            formControlName="option_c"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">D.</label>
+          <input
+            type="text"
+            formControlName="option_d"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6 mt-6">
+        <div>
+          <label class="block text-gray-700 text-lg">Correct Option:</label>
+          <select
+            formControlName="correct_option"
+            class="w-full p-3 border rounded-lg"
+          >
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-lg">Upload Image:</label>
+          <input
+            type="file"
+            (change)="onImageUpload($event, i)"
+            class="w-full p-3 border rounded-lg"
+          />
+          <img
+            *ngIf="questionForms[i].get('image_url')?.value"
+            [src]="questionForms[i].get('image_url')?.value"
+            class="mt-3 max-w-xs rounded-lg shadow"
+          />
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-lg">Difficulty:</label>
+          <select
+            formControlName="difficulty"
+            class="w-full p-3 border rounded-lg"
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-center gap-6">
+        <button
+          type="button"
+          (click)="toggleEdit(i)"
+          class="px-5 py-3 rounded-lg bg-blue-500 text-white hover:bg-blue-600 text-lg"
+        >
+          {{ isEditing[i] ? "Cancel" : "Update" }}
+        </button>
+
+        <button
+          *ngIf="isEditing[i]"
+          type="button"
+          (click)="saveQuestion(i)"
+          class="px-5 py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 text-lg"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- New Question Form -->
+  <div class="border p-6 rounded-lg shadow mt-8">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">Add New Question</h3>
+    <form [formGroup]="newQuestionForm">
+      <label class="block text-gray-700 font-semibold text-lg">Question:</label>
+      <textarea
+        formControlName="question_text"
+        class="w-full p-3 border rounded-lg"
+      ></textarea>
+
+      <label class="block text-gray-700 mt-4 text-lg">Options:</label>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">A.</label>
+          <input
+            type="text"
+            formControlName="option_a"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">B.</label>
+          <input
+            type="text"
+            formControlName="option_b"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">C.</label>
+          <input
+            type="text"
+            formControlName="option_c"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="font-bold text-lg">D.</label>
+          <input
+            type="text"
+            formControlName="option_d"
+            class="p-3 border rounded-lg w-full"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6 mt-6">
+        <div>
+          <label class="block text-gray-700 text-lg">Correct Option:</label>
+          <select
+            formControlName="correct_option"
+            class="w-full p-3 border rounded-lg"
+          >
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-lg">Upload Image:</label>
+          <input
+            type="file"
+            (change)="onImageUpload($event, 'new')"
+            class="w-full p-3 border rounded-lg"
+          />
+        </div>
+
+        <div>
+          <label class="block text-gray-700 text-lg">Difficulty:</label>
+          <select
+            formControlName="difficulty"
+            class="w-full p-3 border rounded-lg"
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="addNewQuestion()"
+        class="w-full p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 mt-4"
+      >
+        Add Question
+      </button>
+    </form>
+  </div>
+</div>

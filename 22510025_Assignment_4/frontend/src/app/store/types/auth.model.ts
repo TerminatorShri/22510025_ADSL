@@ -4,6 +4,4 @@ export interface User {
   role: string;
 }
 
-export interface AuthState {
-  user: User | null;
-}
+
