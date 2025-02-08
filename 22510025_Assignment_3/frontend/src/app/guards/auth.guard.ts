@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
             next.data['role_id'],
             typeof next.data['role_id']
           );
-          const requiredRole = next.data['role_id']; 
+          const requiredRole = next.data['role_id'];
           if (user.role_id === requiredRole) {
             return true;
           } else {
