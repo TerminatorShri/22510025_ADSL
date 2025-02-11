@@ -1,0 +1,6 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+GET Teacher Exams,500,16,1,168,22.25,0.000%,51.56766,34.65,6.95,688.0
+GET Completed Exams,500,15,1,168,22.70,0.000%,51.32943,38.35,7.42,765.0
+GET Completed Exam Details,500,15,2,157,17.68,0.000%,52.25206,99.04,7.50,1941.0
+GET Exam Questions,500,20,2,178,27.20,0.000%,52.51549,54.57,7.54,1064.0
+TOTAL,2000,17,1,178,22.81,0.000%,205.19134,223.33,29.06,1114.5

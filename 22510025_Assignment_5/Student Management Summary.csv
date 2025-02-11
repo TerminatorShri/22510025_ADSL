@@ -1,0 +1,6 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+GET Student Grades,600,5,1,192,12.53,0.000%,2.24841,1.17,0.36,532.0
+GET Department Courses,600,6,1,223,13.30,0.000%,2.24844,2.98,0.35,1359.0
+GET Teacher Schedule,600,6,1,273,15.12,0.000%,2.24847,2.51,0.36,1143.0
+GET Department Details,600,4,1,100,6.14,0.000%,2.25029,1.02,0.35,466.0
+TOTAL,2400,5,1,273,12.29,0.000%,8.99365,7.69,1.41,875.0
