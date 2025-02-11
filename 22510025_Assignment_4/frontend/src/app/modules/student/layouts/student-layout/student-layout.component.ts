@@ -52,7 +52,7 @@ export class StudentLayoutComponent {
 
   private logout(): void {
     this.store.dispatch(logout());
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth']);
   }
 
   navigateStudent(route: string) {

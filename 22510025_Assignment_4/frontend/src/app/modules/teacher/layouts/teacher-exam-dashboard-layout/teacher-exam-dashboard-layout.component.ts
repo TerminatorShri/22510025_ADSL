@@ -51,7 +51,7 @@ export class TeacherExamDashboardLayoutComponent {
 
   private logout(): void {
     this.store.dispatch(logout());
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth']);
   }
 
   navigateTeacher(route: string | undefined) {

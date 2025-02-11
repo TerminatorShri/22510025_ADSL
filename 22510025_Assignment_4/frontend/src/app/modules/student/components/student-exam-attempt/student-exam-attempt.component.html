@@ -1,1 +1,100 @@
-<p>student-exam-attempt works!</p>
+<div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+  <!-- Header: Exam Title, Marks, and Timer -->
+  <div class="flex justify-between items-center border-b pb-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">{{ examDetails?.title }}</h1>
+      <p class="text-gray-600 mt-1">
+        Total Marks:
+        <span class="font-semibold">{{ examDetails?.total_marks }}</span>
+      </p>
+    </div>
+    <div class="text-right">
+      <p class="text-lg font-bold text-red-500">
+        ⏳ Time Left: <span>{{ formatTime() }}</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Questions List -->
+  <div
+    *ngFor="let question of examQuestions; let i = index"
+    class="mt-6 border p-4 rounded-lg shadow"
+  >
+    <div
+      class="grid"
+      [ngClass]="question.image_url ? 'grid-cols-3 gap-4' : 'grid-cols-1'"
+    >
+      <!-- Left: Question & Options (Takes Full Width if No Image) -->
+      <div [ngClass]="question.image_url ? 'col-span-2' : 'col-span-1'">
+        <p class="text-lg font-semibold text-gray-800 mb-3">
+          {{ i + 1 }}. {{ question.question_text }}
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+          <label
+            class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer"
+            [class.bg-blue-100]="answers[i].selected_option === 'A'"
+          >
+            <input
+              type="radio"
+              [name]="'question' + i"
+              (change)="selectAnswer(question.id, 'A')"
+            />
+            <span>A. {{ question.option_a }}</span>
+          </label>
+          <label
+            class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer"
+            [class.bg-blue-100]="answers[i].selected_option === 'B'"
+          >
+            <input
+              type="radio"
+              [name]="'question' + i"
+              (change)="selectAnswer(question.id, 'B')"
+            />
+            <span>B. {{ question.option_b }}</span>
+          </label>
+          <label
+            class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer"
+            [class.bg-blue-100]="answers[i].selected_option === 'C'"
+          >
+            <input
+              type="radio"
+              [name]="'question' + i"
+              (change)="selectAnswer(question.id, 'C')"
+            />
+            <span>C. {{ question.option_c }}</span>
+          </label>
+          <label
+            class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer"
+            [class.bg-blue-100]="answers[i].selected_option === 'D'"
+          >
+            <input
+              type="radio"
+              [name]="'question' + i"
+              (change)="selectAnswer(question.id, 'D')"
+            />
+            <span>D. {{ question.option_d }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Right: Question Image (if available) -->
+      <div class="text-center" *ngIf="question.image_url">
+        <img
+          [src]="question.image_url"
+          alt="Question Image"
+          class="max-w-full rounded-lg shadow-lg"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="mt-6 text-center">
+    <button
+      (click)="submitExam()"
+      class="px-6 py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 transition text-lg"
+    >
+      Submit Exam
+    </button>
+  </div>
+</div>

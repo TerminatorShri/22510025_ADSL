@@ -21,3 +21,8 @@ export interface AttemptedExamDetails {
   course_name: string;
   course_code: string;
 }
+
+export interface SubmittedAnswer {
+  question_id: number; // Question ID
+  selected_option: 'A' | 'B' | 'C' | 'D' | undefined; // Selected answer
+}

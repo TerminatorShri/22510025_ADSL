@@ -54,6 +54,6 @@ export class StudentAssignedExamsComponent implements OnInit {
   }
 
   navigateToExam(examId: number) {
-    this.router.navigate([`/student/exam/attempt/${examId}`]);
+    this.router.navigate([`/student/exam/${examId}/attempt`]);
   }
 }

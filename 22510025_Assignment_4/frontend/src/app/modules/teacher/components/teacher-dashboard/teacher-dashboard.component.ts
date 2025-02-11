@@ -111,7 +111,7 @@ export class TeacherDashboardComponent implements OnInit {
 
   private logout(): void {
     this.store.dispatch(logout());
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth']);
   }
 
   openNewExamForm(): void {

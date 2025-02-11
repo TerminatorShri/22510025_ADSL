@@ -77,7 +77,7 @@ export const submitExamAnswers = async (req, res) => {
     const response = await Student.submitExamAnswers(attemptId, answers);
     res.status(200).json(response);
   } catch (error) {
-    console.error("Error submitting answers:", error);
+    console.error("❌ Error submitting answers:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
