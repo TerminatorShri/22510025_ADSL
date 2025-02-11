@@ -56,7 +56,6 @@ export class TeacherExamDashboardLayoutComponent {
 
   navigateTeacher(route: string | undefined) {
     const examId = this.route.snapshot.paramMap.get('id');
-    console.log(examId);
 
     if (examId) {
       this.activeRoute = route;

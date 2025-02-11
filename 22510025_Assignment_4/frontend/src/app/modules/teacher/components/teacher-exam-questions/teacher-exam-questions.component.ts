@@ -7,10 +7,18 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { TecherActionService } from '../../services/techer-action.service';
-import { ExamQuestion } from './teacher-exam-questions.model';
+import { TeacherActionService } from '../../services/teacher-action.service';
+import {
+  AddQuestionRequest,
+  ExamQuestion,
+} from './teacher-exam-questions.model';
 import { ApiResponse } from '../../../../models/api.model';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
+import { Observable } from 'rxjs';
+import { User } from '../../../../store/types/auth.model';
+import { Store } from '@ngrx/store';
+import { selectUser } from '../../../../store/selectors/auth.selectors';
 
 @Component({
   selector: 'app-teacher-exam-questions',
@@ -19,17 +27,39 @@ import { CommonModule } from '@angular/common';
   styleUrl: './teacher-exam-questions.component.css',
 })
 export class TeacherExamQuestionsComponent implements OnInit {
+  user$: Observable<User | null>;
   examId: number = 0;
   examQuestions: ExamQuestion[] = [];
   questionForms: FormGroup[] = [];
   isEditing: boolean[] = [];
   newQuestionForm!: FormGroup;
+  userId: number = 0;
+
+  Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
 
   constructor(
     private route: ActivatedRoute,
-    private teacherActionService: TecherActionService,
-    private formBuilder: FormBuilder
-  ) {}
+    private teacherActionService: TeacherActionService,
+    private formBuilder: FormBuilder,
+    private store: Store
+  ) {
+    this.user$ = this.store.select(selectUser);
+    this.user$.subscribe((user) => {
+      if (user) {
+        this.userId = user.id;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -133,10 +163,40 @@ export class TeacherExamQuestionsComponent implements OnInit {
 
   addNewQuestion() {
     if (this.newQuestionForm.valid) {
-      console.log('Adding new question:', this.newQuestionForm.value);
-      this.newQuestionForm.reset();
+      const newQuestion: AddQuestionRequest = {
+        teacherId: this.userId, // Ensure teacher ID is included
+        examId: this.examId, // Ensure exam ID is included
+        questionText: this.newQuestionForm.value.question_text,
+        optionA: this.newQuestionForm.value.option_a,
+        optionB: this.newQuestionForm.value.option_b,
+        optionC: this.newQuestionForm.value.option_c,
+        optionD: this.newQuestionForm.value.option_d,
+        correctOption: this.newQuestionForm.value.correct_option,
+        difficulty: this.newQuestionForm.value.difficulty,
+        imageUrl: this.newQuestionForm.value.image_url || null, // Set null if empty
+      };
+
+      console.log('📌 Adding new question:', newQuestion);
+
+      this.teacherActionService.addQuestionToExam(newQuestion).subscribe({
+        next: (response: ApiResponse<ExamQuestion[]>) => {
+          console.log('✅ Question added successfully:', response);
+
+          // Refresh the question list after adding a new question
+          this.getExamQuestions();
+
+          // Reset form after submission
+          this.newQuestionForm.reset();
+        },
+        error: (error) => {
+          console.error('❌ Error adding new question:', error);
+        },
+      });
     } else {
-      console.error('❌ New question form is invalid.');
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Please fill all the fields!',
+      });
     }
   }
 

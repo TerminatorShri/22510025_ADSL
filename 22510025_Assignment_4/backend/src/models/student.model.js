@@ -120,107 +120,90 @@ const Student = {
 
     let correctCount = 0;
     const totalQuestions = answers.length;
+
+    // Get student_id from attemptId
     const studentIdQuery = `SELECT student_id FROM student_exam_attempts WHERE id = ?`;
+    const [studentResult] = await dbInstance.execute(studentIdQuery, [
+      attemptId,
+    ]);
+    if (studentResult.length === 0) {
+      return { success: false, message: "Student attempt not found." };
+    }
+    const studentId = studentResult[0].student_id;
 
-    try {
-      await dbInstance.execute("START TRANSACTION");
+    // Fetch correct answers in one query
+    const questionIds = answers.map((ans) => ans.question_id);
+    const placeholders = questionIds.map(() => "?").join(", ");
+    const answerQuery = `SELECT id, correct_option FROM questions WHERE id IN (${placeholders})`;
+    const [correctAnswers] = await dbInstance.execute(answerQuery, questionIds);
 
-      // Get student_id from attemptId
-      const [studentResult] = await dbInstance.execute(studentIdQuery, [
-        attemptId,
-      ]);
-      if (studentResult.length === 0) {
-        throw new Error("❌ Student attempt not found.");
-      }
-      const studentId = studentResult[0].student_id;
+    // Map correct answers for quick lookup
+    const correctMap = new Map(
+      correctAnswers.map((q) => [q.id, q.correct_option])
+    );
 
-      // Fetch correct answers in one query
-      const questionIds = answers.map((ans) => ans.question_id);
-      const placeholders = questionIds.map(() => "?").join(", ");
-      const answerQuery = `SELECT id, correct_option FROM questions WHERE id IN (${placeholders})`;
-      const [correctAnswers] = await dbInstance.execute(
-        answerQuery,
-        questionIds
-      );
+    // Insert answers & calculate correct count
+    for (const answer of answers) {
+      const isCorrect =
+        correctMap.get(answer.question_id) === answer.selected_option;
+      if (isCorrect) correctCount++;
 
-      // Map correct answers for quick lookup
-      const correctMap = new Map(
-        correctAnswers.map((q) => [q.id, q.correct_option])
-      );
-
-      // Prepare batch insert for student_answers
-      const insertValues = [];
-      for (const answer of answers) {
-        const isCorrect =
-          correctMap.get(answer.question_id) === answer.selected_option;
-        if (isCorrect) correctCount++;
-        insertValues.push([
-          attemptId,
-          answer.question_id,
-          answer.selected_option,
-          isCorrect,
-        ]);
-      }
-
-      if (insertValues.length > 0) {
-        const insertQuery = `
-          INSERT INTO student_answers (student_attempt_id, question_id, selected_option, is_correct)
-          VALUES ?
-        `;
-        await dbInstance.query(insertQuery, [insertValues]);
-      }
-
-      // Get total marks for the exam
-      const examQuery = `
-        SELECT e.id, e.total_marks FROM exams e
-        JOIN student_exam_attempts sea ON e.id = sea.exam_id
-        WHERE sea.id = ?
-      `;
-      const [examResult] = await dbInstance.execute(examQuery, [attemptId]);
-      if (examResult.length === 0) {
-        throw new Error("❌ Exam not found.");
-      }
-
-      const totalMarks = examResult[0].total_marks;
-      const studentScore =
-        totalQuestions > 0
-          ? Math.round((correctCount / totalQuestions) * totalMarks)
-          : 0;
-      const passStatus = studentScore >= totalMarks * 0.4 ? "passed" : "failed";
-
-      // Update attempt status
-      const updateQuery = `
-        UPDATE student_exam_attempts 
-        SET status = 'completed', end_time = NOW(), score = ? 
-        WHERE id = ?
-      `;
-      await dbInstance.execute(updateQuery, [studentScore, attemptId]);
-
-      // Store result in exam_results
-      const resultQuery = `
-        INSERT INTO exam_results (student_id, exam_id, total_score, status)
+      const insertQuery = `
+        INSERT INTO student_answers (student_attempt_id, question_id, selected_option, is_correct)
         VALUES (?, ?, ?, ?)
       `;
-      await dbInstance.execute(resultQuery, [
-        studentId,
-        examResult[0].id,
-        studentScore,
-        passStatus,
+      await dbInstance.execute(insertQuery, [
+        attemptId,
+        answer.question_id,
+        answer.selected_option,
+        isCorrect,
       ]);
-
-      await dbInstance.execute("COMMIT");
-
-      return {
-        success: true,
-        message: "✅ Exam submitted successfully",
-        score: studentScore,
-        status: passStatus,
-      };
-    } catch (error) {
-      await dbInstance.execute("ROLLBACK");
-      console.error("❌ Error in submitExamAnswers:", error);
-      return { success: false, message: "Failed to submit exam." };
     }
+
+    // Get total marks for the exam
+    const examQuery = `
+      SELECT e.id, e.total_marks FROM exams e
+      JOIN student_exam_attempts sea ON e.id = sea.exam_id
+      WHERE sea.id = ?
+    `;
+    const [examResult] = await dbInstance.execute(examQuery, [attemptId]);
+    if (examResult.length === 0) {
+      return { success: false, message: "Exam not found." };
+    }
+
+    const totalMarks = examResult[0].total_marks;
+    const studentScore =
+      totalQuestions > 0
+        ? Math.round((correctCount / totalQuestions) * totalMarks)
+        : 0;
+    const passStatus = studentScore >= totalMarks * 0.4 ? "passed" : "failed";
+
+    // Update attempt status
+    const updateQuery = `
+      UPDATE student_exam_attempts 
+      SET status = 'completed', end_time = NOW(), score = ? 
+      WHERE id = ?
+    `;
+    await dbInstance.execute(updateQuery, [studentScore, attemptId]);
+
+    // Store result in exam_results
+    const resultQuery = `
+      INSERT INTO exam_results (student_id, exam_id, total_score, status)
+      VALUES (?, ?, ?, ?)
+    `;
+    await dbInstance.execute(resultQuery, [
+      studentId,
+      examResult[0].id,
+      studentScore,
+      passStatus,
+    ]);
+
+    return {
+      success: true,
+      message: "✅ Exam submitted successfully",
+      score: studentScore,
+      status: passStatus,
+    };
   },
 
   // Get attempted exam details, including marks & submitted answers

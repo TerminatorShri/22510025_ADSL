@@ -156,7 +156,7 @@ export class StudentExamAttemptComponent implements OnInit, OnDestroy {
             title: 'Exam submitted successfully!',
             text: `You scored ${response.data.score} out of ${this.examDetails?.total_marks}.`,
           });
-          this.router.navigate([`/student/exam/${this.examId}/completed`]);
+          this.router.navigate([`/student`]);
         },
         error: (error) => {
           console.log('❌ Error submitting exam:', error);

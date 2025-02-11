@@ -10,7 +10,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TecherActionService } from '../../services/techer-action.service';
+import { TeacherActionService } from '../../services/teacher-action.service';
 import { User } from '../../../../store/types/auth.model';
 import { selectUser } from '../../../../store/selectors/auth.selectors';
 import { logout } from '../../../../store/actions/auth.actions';
@@ -40,7 +40,7 @@ export class TeacherDashboardComponent implements OnInit {
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1000,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
@@ -52,16 +52,17 @@ export class TeacherDashboardComponent implements OnInit {
     private store: Store,
     private router: Router,
     private formBuilder: FormBuilder,
-    private teacherActionService: TecherActionService,
+    private teacherActionService: TeacherActionService,
     private dialog: MatDialog
   ) {
     this.user$ = this.store.select(selectUser);
     this.examForm = this.formBuilder.group({
       title: ['', Validators.required],
+      courseId: ['', Validators.required],
       description: ['', Validators.required],
-      total_marks: [100, [Validators.required, Validators.min(1)]],
+      total_marks: [[Validators.required, Validators.min(1)]],
       start_time: ['', Validators.required],
-      duration_minutes: [60, [Validators.required, Validators.min(1)]],
+      duration_minutes: [[Validators.required, Validators.min(1)]],
     });
   }
 
@@ -128,6 +129,10 @@ export class TeacherDashboardComponent implements OnInit {
 
   createExam(): void {
     if (this.examForm.invalid) {
+      this.Toast.fire({
+        icon: 'error',
+        title: 'Please fill all the fields!',
+      });
       return;
     }
 

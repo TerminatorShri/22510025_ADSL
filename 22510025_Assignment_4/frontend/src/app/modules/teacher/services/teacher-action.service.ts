@@ -10,11 +10,13 @@ import {
 import { CurrentExam } from '../components/teacher-exam-info/teacher-exam-info.model';
 import { ExamQuestion } from '../components/teacher-exam-questions/teacher-exam-questions.model';
 import { ExamResult } from '../components/teacher-exam-results/teacher-exam-result.model';
+import { AssignedStudent } from '../components/assign-exam-stundents/assign-exam-students.model';
+import { AddQuestionRequest } from '../components/teacher-exam-questions/teacher-exam-questions.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TecherActionService {
+export class TeacherActionService {
   private readonly API_URL: string = 'http://localhost:8000/api/v1/teacher';
 
   constructor(private http: HttpClient) {}
@@ -58,6 +60,32 @@ export class TecherActionService {
     return this.http.put<ApiResponse<any>>(
       `${this.API_URL}/exam/${updatedExam.id}`,
       updatedExam
+    );
+  }
+
+  getAssignedStudents(
+    examId: number
+  ): Observable<ApiResponse<AssignedStudent[]>> {
+    return this.http.get<ApiResponse<AssignedStudent[]>>(
+      `${this.API_URL}/exam/${examId}/assigned-students`
+    );
+  }
+
+  assignNewStudents(examId: number, studentIds: number[]): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/exam/assign-students`, {
+      examId,
+      studentIds,
+    });
+  }
+
+  addQuestionToExam(
+    questionData: AddQuestionRequest
+  ): Observable<ApiResponse<ExamQuestion[]>> {
+    return this.http.post<ApiResponse<ExamQuestion[]>>(
+      `${this.API_URL}/exam/add-question`,
+      {
+        ...questionData,
+      }
     );
   }
 }

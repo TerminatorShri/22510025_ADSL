@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { TecherActionService } from '../../services/techer-action.service';
+import { TeacherActionService } from '../../services/teacher-action.service';
 import { ApiResponse } from '../../../../models/api.model';
 
 interface ExamResult {
@@ -22,7 +22,7 @@ export class TeacherExamResultsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private teacherActionService: TecherActionService
+    private teacherActionService: TeacherActionService
   ) {}
 
   ngOnInit(): void {

@@ -53,6 +53,66 @@ const Teacher = {
     return rows.length > 0 ? rows[0] : null;
   },
 
+  addQuestionToExam: async (
+    examId,
+    teacherId,
+    questionText,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    correctOption,
+    difficulty,
+    imageUrl = null // Default to null if not provided
+  ) => {
+    try {
+      // Step 1: Insert new question into `questions` table
+      const insertQuestionQuery = `
+        INSERT INTO questions (created_by, question_text, option_a, option_b, option_c, option_d, correct_option, image_url, difficulty, course_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`;
+
+      const [questionResult] = await dbInstance.execute(insertQuestionQuery, [
+        teacherId,
+        questionText,
+        optionA,
+        optionB,
+        optionC,
+        optionD,
+        correctOption,
+        imageUrl, // Null if not provided
+        difficulty,
+      ]);
+
+      // Get the newly inserted question ID
+      const newQuestionId = questionResult.insertId;
+      if (!newQuestionId) {
+        return { success: false, message: "Failed to insert new question" };
+      }
+
+      // Step 2: Append new question ID to `question_ids` array in `exams` table
+      const updateExamQuery = `
+        UPDATE exams 
+        SET question_ids = JSON_ARRAY_APPEND(question_ids, '$', ?) 
+        WHERE id = ?`;
+
+      const [updateResult] = await dbInstance.execute(updateExamQuery, [
+        newQuestionId,
+        examId,
+      ]);
+
+      return updateResult.affectedRows > 0
+        ? {
+            success: true,
+            message: "Question added to exam successfully",
+            questionId: newQuestionId,
+          }
+        : { success: false, message: "Failed to add question to exam" };
+    } catch (error) {
+      console.error("Error adding question to exam:", error);
+      return { success: false, message: "Internal Server Error" };
+    }
+  },
+
   // Update exam details
   updateExam: async (
     examId,
@@ -145,31 +205,60 @@ const Teacher = {
   },
 
   // Assign students to an exam
-  assignStudentsToExam: async (examId, studentIds) => {
-    if (!studentIds.length) {
+  assignStudentsToExam: async (examId, newStudentIds) => {
+    if (!newStudentIds.length) {
       return { success: false, message: "No students provided for assignment" };
     }
 
-    // Convert studentIds array to a JSON string
-    const studentIdsJSON = JSON.stringify(studentIds);
+    // Fetch the current assigned students
+    const selectQuery = "SELECT assigned_students FROM exams WHERE id = ?";
+    const [rows] = await dbInstance.execute(selectQuery, [examId]);
 
-    // Update exam table to include assigned students
-    const query = "UPDATE exams SET assigned_students = ? WHERE id = ?";
-    const [rows] = await dbInstance.execute(query, [studentIdsJSON, examId]);
+    if (!rows.length) {
+      return { success: false, message: "Exam not found" };
+    }
 
-    return rows.affectedRows > 0
+    // Parse the current assigned students array
+    let assignedStudents = JSON.parse(rows[0].assigned_students || "[]");
+
+    // Merge new students (avoiding duplicates)
+    assignedStudents = [...new Set([...assignedStudents, ...newStudentIds])];
+
+    // Update the exams table with the new student list
+    const updateQuery = "UPDATE exams SET assigned_students = ? WHERE id = ?";
+    const [updateRows] = await dbInstance.execute(updateQuery, [
+      JSON.stringify(assignedStudents),
+      examId,
+    ]);
+
+    return updateRows.affectedRows > 0
       ? { success: true, message: "Students assigned to exam successfully" }
       : { success: false, message: "Failed to assign students to exam" };
   },
 
   // Get assigned students for an exam
   getAssignedStudents: async (examId) => {
-    const query = `SELECT u.id, u.username, u.email 
-                   FROM users u
-                   JOIN students s ON u.id = s.user_id
-                   WHERE JSON_CONTAINS((SELECT assigned_students FROM exams WHERE id = ?), JSON_QUOTE(s.id))`;
+    const query = `
+        SELECT u.id, u.username 
+        FROM users u
+        JOIN students s ON u.id = s.user_id
+        WHERE JSON_CONTAINS(
+            (SELECT assigned_students FROM exams WHERE id = ?), 
+            CAST(s.id AS CHAR), 
+            '$'
+        )
+    `;
+
+    console.log("inside getAssignedStudents", examId);
+
     const [rows] = await dbInstance.execute(query, [examId]);
     return rows;
+  },
+
+  getCourseID: async (examId) => {
+    const query = `SELECT course_id FROM exams WHERE id = ?`;
+    const [rows] = await dbInstance.execute(query, [examId]);
+    return rows.length > 0 ? rows[0].course_id : null;
   },
 };
 

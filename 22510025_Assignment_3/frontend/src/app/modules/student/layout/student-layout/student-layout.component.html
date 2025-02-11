@@ -1,3 +1,20 @@
+<div
+  class="flex flex-col md:flex-row justify-between items-center bg-gray-200 p-4 rounded-lg"
+>
+  <div class="font-bold">Student Section</div>
+  <div class="mt-2 md:mt-0 md:ml-auto flex items-center space-x-4">
+    <div class="relative">
+      <select
+        class="flex items-center space-x-2 p-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+        (change)="handleDropdownChange($event)"
+      >
+        <option>{{ user?.student_name }}</option>
+        <option value="logoutUser">Logout</option>
+      </select>
+    </div>
+  </div>
+</div>
+
 <div class="flex h-screen">
   <!-- Sidebar -->
   <div class="w-64 bg-gray-100 p-4 flex flex-col justify-between">
@@ -38,14 +55,6 @@
         Student Applications
       </button>
     </div>
-
-    <!-- Logout Button -->
-    <button
-      (click)="confirmLogout()"
-      class="w-full p-3 rounded-lg text-left bg-red-500 text-white hover:bg-red-600 transition"
-    >
-      Logout
-    </button>
   </div>
 
   <!-- Content -->

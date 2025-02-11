@@ -1,0 +1,48 @@
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+  <!-- Header -->
+  <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">
+    Assigned Students
+  </h2>
+
+  <!-- Assigned Students List -->
+  <div *ngIf="assignedStudents.length > 0; else noStudents">
+    <ul class="divide-y divide-gray-300">
+      <li
+        *ngFor="let student of assignedStudents"
+        class="p-3 flex justify-between items-center"
+      >
+        <span class="text-lg font-medium text-gray-700">
+          {{ student.id }} - {{ student.username }}
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- No Students Assigned -->
+  <ng-template #noStudents>
+    <p class="text-center text-gray-500">No students assigned yet.</p>
+  </ng-template>
+
+  <!-- Assign New Students Form -->
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+      Assign New Students
+    </h3>
+
+    <form [formGroup]="assignStudentForm" (ngSubmit)="assignStudents()">
+      <textarea
+        formControlName="studentIds"
+        placeholder="Enter student IDs separated by space..."
+        class="w-full p-2 border rounded-lg"
+      ></textarea>
+
+      <button
+        type="submit"
+        class="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+        [disabled]="assignStudentForm.invalid"
+      >
+        Assign Students
+      </button>
+    </form>
+  </div>
+</div>

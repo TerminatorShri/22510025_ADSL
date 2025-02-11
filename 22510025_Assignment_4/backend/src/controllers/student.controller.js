@@ -88,7 +88,6 @@ export const submitExamAnswers = async (req, res) => {
 export const getAttemptedExamDetails = async (req, res) => {
   try {
     const { studentId, examId } = req.params;
-    console.log(studentId, examId);
     const examDetails = await Student.getAttemptedQuestions(studentId, examId);
     res.status(200).json({
       success: true,

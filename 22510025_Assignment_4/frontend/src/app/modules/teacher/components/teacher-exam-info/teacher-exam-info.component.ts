@@ -8,7 +8,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { TecherActionService } from '../../services/techer-action.service';
+import { TeacherActionService } from '../../services/teacher-action.service';
 import { ApiResponse } from '../../../../models/api.model';
 import { CurrentExam } from './teacher-exam-info.model';
 
@@ -26,7 +26,7 @@ export class TeacherExamInfoComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private teacherActionService: TecherActionService,
+    private teacherActionService: TeacherActionService,
     private formBuilder: FormBuilder
   ) {}
 

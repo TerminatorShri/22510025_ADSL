@@ -29,6 +29,15 @@
       </button>
 
       <button
+        (click)="navigateTeacher('students')"
+        [class.bg-blue-500]="activeRoute === 'students'"
+        [class.text-white]="activeRoute === 'students'"
+        class="w-full p-3 rounded-lg text-left hover:bg-blue-400 hover:text-white transition"
+      >
+        Assign Students
+      </button>
+
+      <button
         (click)="navigateTeacher('results')"
         [class.bg-blue-500]="activeRoute === 'results'"
         [class.text-white]="activeRoute === 'results'"

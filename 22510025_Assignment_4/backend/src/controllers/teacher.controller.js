@@ -21,10 +21,11 @@ export const createExam = async (req, res) => {
       !start_time ||
       !duration_minutes
     ) {
+      console.log("Missing required fields");
       return res.status(400).json(new ApiError(400, "Missing required fields"));
     }
 
-    const result = await Exam.createExam(
+    const result = await Teacher.createExam(
       teacherId,
       courseId,
       title,
@@ -35,6 +36,7 @@ export const createExam = async (req, res) => {
     );
 
     if (!result.success) {
+      console.log(result.message);
       return res.status(400).json(new ApiError(400, result.message));
     }
 
@@ -201,6 +203,7 @@ export const getAssignedStudents = async (req, res) => {
     }
 
     const students = await Teacher.getAssignedStudents(examId);
+
     return res
       .status(200)
       .json(
@@ -210,6 +213,89 @@ export const getAssignedStudents = async (req, res) => {
           "Assigned students retrieved successfully"
         )
       );
+  } catch (error) {
+    console.log("🚀 ~ getAssignedStudents ~ error", error);
+    return res
+      .status(500)
+      .json(new ApiError(500, "Server error", [], error.stack));
+  }
+};
+
+export const addQuestionToExam = async (req, res) => {
+  try {
+    const {
+      examId,
+      teacherId,
+      questionText,
+      optionA,
+      optionB,
+      optionC,
+      optionD,
+      correctOption,
+      difficulty,
+      imageUrl,
+    } = req.body;
+    console.log(
+      "🚀 ~ file: teacher.controller.js ~ line 181 ~ addQuestionToExam ~ req.body",
+      req.body
+    );
+
+    if (
+      !examId ||
+      !teacherId ||
+      !questionText ||
+      !optionA ||
+      !optionB ||
+      !optionC ||
+      !optionD ||
+      !correctOption ||
+      !difficulty
+    ) {
+      console.log("Missing required fields");
+      return res.status(400).json(new ApiError(400, "Missing required fields"));
+    }
+
+    const result = await Teacher.addQuestionToExam(
+      examId,
+      teacherId,
+      questionText,
+      optionA,
+      optionB,
+      optionC,
+      optionD,
+      correctOption,
+      difficulty,
+      imageUrl || null
+    );
+
+    if (!result.success) {
+      return res.status(400).json(new ApiError(400, result.message));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, { questionId: result.questionId }, result.message)
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiError(500, "Server error", [], error.stack));
+  }
+};
+
+export const getCourseID = async (req, res) => {
+  try {
+    const { examId } = req.params;
+
+    if (!examId) {
+      return res.status(400).json(new ApiError(400, "Exam ID is required"));
+    }
+
+    const courseID = await Teacher.getCourseID(examId);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, courseID, "Course ID retrieved successfully"));
   } catch (error) {
     return res
       .status(500)

@@ -81,6 +81,10 @@ export class LoginComponent {
         }
       },
       error: (error) => {
+        this.Toast.fire({
+          icon: 'error',
+          title: 'Sign in failed!',
+        });
         this.errorMessage = error.error.message;
       },
     });

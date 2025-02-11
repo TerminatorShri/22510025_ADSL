@@ -7,6 +7,7 @@ import { TeacherExamInfoComponent } from './components/teacher-exam-info/teacher
 import { TeacherExamQuestionsComponent } from './components/teacher-exam-questions/teacher-exam-questions.component';
 import { TeacherExamResultsComponent } from './components/teacher-exam-results/teacher-exam-results.component';
 import { TeacherExamDashboardLayoutComponent } from './layouts/teacher-exam-dashboard-layout/teacher-exam-dashboard-layout.component';
+import { AssignExamStundentsComponent } from './components/assign-exam-stundents/assign-exam-stundents.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
           {
             path: '',
             component: TeacherExamInfoComponent,
+          },
+          {
+            path: 'students',
+            component: AssignExamStundentsComponent,
           },
           {
             path: 'questions',
