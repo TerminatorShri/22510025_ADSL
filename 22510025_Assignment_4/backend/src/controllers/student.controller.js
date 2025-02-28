@@ -7,6 +7,7 @@ export const getUnattemptedExams = async (req, res) => {
   try {
     const { studentId } = req.params;
     const exams = await Student.getUnattemptedExams(studentId);
+    console.log("🚀 ~ getUnattemptedExams ~ studentId:", studentId)
     res.status(200).json({
       success: true,
       message: "Unattempted exams retrieved successfully",

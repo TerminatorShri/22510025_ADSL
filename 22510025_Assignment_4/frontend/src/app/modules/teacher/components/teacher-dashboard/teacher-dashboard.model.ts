@@ -8,7 +8,6 @@ export interface TeacherExam {
   status: 'upcoming' | 'ongoing' | 'completed'; // Enum for status
 }
 
-
 export interface CreateExamRequest {
   teacherId: number;
   courseId: number;
