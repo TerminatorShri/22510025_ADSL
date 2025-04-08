@@ -1,0 +1,59 @@
+<div class="p-4 max-w-4xl mx-auto">
+  <h1 class="text-2xl font-semibold mb-4">Weather Station Readings</h1>
+
+  <div class="flex flex-wrap gap-4 mb-4">
+    <div>
+      <label class="block font-medium">Select Station</label>
+      <select
+        [(ngModel)]="selectedStation"
+        (change)="onStationChange()"
+        class="border px-3 py-1 rounded"
+      >
+        <option *ngFor="let station of stationOptions" [value]="station">
+          {{ station }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-medium">Temperature Unit</label>
+      <select
+        [(ngModel)]="temperatureUnit"
+        (change)="onUnitChange()"
+        class="border px-3 py-1 rounded"
+      >
+        <option value="Celsius">Celsius (°C)</option>
+        <option value="Fahrenheit">Fahrenheit (°F)</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading">Loading readings...</div>
+  <div *ngIf="errorMessage" class="text-red-500">{{ errorMessage }}</div>
+
+  <table
+    *ngIf="readings.length > 0"
+    class="min-w-full border border-collapse border-gray-300"
+  >
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="border px-4 py-2 text-left">Station ID</th>
+        <th class="border px-4 py-2 text-left">
+          Temperature ({{ temperatureUnit === "Celsius" ? "°C" : "°F" }})
+        </th>
+        <th class="border px-4 py-2 text-left">Reading Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let reading of readings">
+        <td class="border px-4 py-2">{{ reading.weather_station_id }}</td>
+        <td class="border px-4 py-2">{{ reading.temperature }}</td>
+        <td class="border px-4 py-2">
+          {{ reading.reading_time | date : "short" }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="readings.length === 0 && !isLoading">No data available.</p>
+</div>

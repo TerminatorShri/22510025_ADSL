@@ -1,8 +1,10 @@
 import express from "express";
+import cors from "cors";
 import cassandra from "cassandra-driver";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Cassandra connection
 const client = new cassandra.Client({
@@ -29,7 +31,6 @@ app.post("/insert", async (req, res) => {
 // Get all readings (regardless of station)
 app.get("/readings", async (req, res) => {
   const query = "SELECT * FROM temperature_by_station";
-
   try {
     const result = await client.execute(query);
     res.json(result.rows);
