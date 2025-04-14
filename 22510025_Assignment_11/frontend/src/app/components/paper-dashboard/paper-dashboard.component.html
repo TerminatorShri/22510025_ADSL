@@ -1,0 +1,201 @@
+<div class="max-w-3xl mx-auto p-6 space-y-8">
+  <!-- Citation Path Form -->
+  <form
+    (ngSubmit)="onCheckCitationPath()"
+    class="bg-white shadow-md rounded-xl p-6 space-y-4"
+  >
+    <h2 class="text-xl font-semibold text-gray-800">Check Citation Path</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input
+        type="text"
+        [(ngModel)]="paperIdA"
+        name="paperIdA"
+        placeholder="Enter Paper A ID"
+        class="border rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
+      />
+      <input
+        type="text"
+        [(ngModel)]="paperIdB"
+        name="paperIdB"
+        placeholder="Enter Paper B ID"
+        class="border rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required
+      />
+    </div>
+    <button
+      type="submit"
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+    >
+      Check Citation Path
+    </button>
+
+    <div *ngIf="parsedCitationPath.length" class="my-4">
+      <h2 class="text-lg font-semibold mb-3">
+        {{ parsedCitationPath.length > 2 ? "Indirect" : "Direct" }} Citation
+        Path
+      </h2>
+
+      <!-- Display Citation Path Cards -->
+      <div class="flex flex-col gap-4">
+        <ng-container *ngFor="let node of parsedCitationPath; let i = index">
+          <!-- Citation Card -->
+          <div
+            class="relative group bg-white p-4 rounded-lg shadow-md border border-gray-200 w-full text-sm text-gray-800"
+          >
+            <!-- Title and Authors -->
+            <p class="font-medium text-gray-900 line-clamp-2">
+              {{ node.parsed.title || "Untitled" }}
+            </p>
+            <p class="text-xs text-gray-600 mt-1 truncate">
+              {{ node.parsed.authors }}
+            </p>
+
+            <!-- Paper ID -->
+            <div class="mt-2 text-xs text-gray-500">
+              <strong>Paper ID:</strong> {{ node.paper.paper_id }}
+            </div>
+
+            <!-- Tooltip on Hover -->
+            <div
+              class="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-2 w-64 whitespace-pre-wrap"
+            >
+              <div><strong>Authors:</strong> {{ node.parsed.authors }}</div>
+              <div><strong>Title:</strong> {{ node.parsed.title }}</div>
+              <div><strong>Booktitle:</strong> {{ node.parsed.booktitle }}</div>
+              <div *ngIf="node.parsed.pages">
+                <strong>Pages:</strong> {{ node.parsed.pages }}
+              </div>
+              <div><strong>Month:</strong> {{ node.parsed.month }}</div>
+              <div><strong>Year:</strong> {{ node.parsed.year }}</div>
+            </div>
+          </div>
+
+          <!-- Arrow Icon from Lucide -->
+          <div
+            *ngIf="i < parsedCitationPath.length - 1"
+            class="flex justify-center"
+          >
+            <lucide-angular
+              [img]="ArrowDown"
+              class="text-gray-500"
+              [size]="24"
+            ></lucide-angular>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </form>
+
+  <!-- Paper Info and Classification Form -->
+  <form
+    (ngSubmit)="onGetPaperDetails()"
+    class="bg-white shadow-md rounded-xl p-6 space-y-4"
+  >
+    <h2 class="text-xl font-semibold text-gray-800">
+      Get Paper Info & Classification
+    </h2>
+    <input
+      type="text"
+      [(ngModel)]="paperIdSingle"
+      name="paperIdSingle"
+      placeholder="Enter Paper ID"
+      class="border rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+      required
+    />
+    <button
+      type="submit"
+      class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
+    >
+      Get Info
+    </button>
+
+    <!-- Paper Info Card -->
+    <div *ngIf="paperDetails" class="max-w-3xl mx-auto mt-10">
+      <div
+        class="bg-white shadow-xl rounded-2xl p-6 space-y-4 border border-gray-100"
+      >
+        <div class="flex items-center justify-between">
+          <h2
+            class="text-2xl font-semibold text-gray-800 flex items-center gap-2"
+          >
+            <lucide-angular
+              [img]="FileText"
+              class="my-icon"
+              [size]="18"
+            ></lucide-angular>
+            Paper Info
+          </h2>
+          <span
+            *ngIf="paperDetails.classification"
+            class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1"
+          >
+            <lucide-angular
+              [img]="Tag"
+              class="my-icon"
+              [size]="18"
+            ></lucide-angular>
+            {{ paperDetails.classification }}
+          </span>
+        </div>
+
+        <div class="space-y-2 text-sm text-gray-700">
+          <div class="flex items-start gap-2">
+            <lucide-angular
+              [img]="FileStack"
+              class="my-icon"
+              [size]="18"
+            ></lucide-angular>
+            <div>
+              <p class="font-medium text-gray-800">Filename:</p>
+              <p class="break-all">{{ paperDetails.filename }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="parsedCitation" class="flex items-start gap-2 rounded-xl">
+            <lucide-angular [img]="Quote" class="my-icon" [size]="18" />
+
+            <div>
+              <p class="font-semibold text-gray-800 mb-1">Citation:</p>
+
+              <p class="text-sm text-gray-700">
+                <span class="font-medium text-gray-900">Authors:</span>
+                {{ parsedCitation.authors }}
+              </p>
+              <p class="text-sm text-gray-700">
+                <span class="font-medium text-gray-900">Title:</span>
+                {{ parsedCitation.title }}
+              </p>
+              <p class="text-sm text-gray-700">
+                <span class="font-medium text-gray-900">Booktitle:</span>
+                {{ parsedCitation.booktitle }}
+              </p>
+              <p class="text-sm text-gray-700" *ngIf="parsedCitation.pages">
+                <span class="font-medium text-gray-900">Pages:</span>
+                {{ parsedCitation.pages }}
+              </p>
+              <p class="text-sm text-gray-700">
+                <span class="font-medium text-gray-900">Month:</span>
+                {{ parsedCitation.month }}
+              </p>
+              <p class="text-sm text-gray-700">
+                <span class="font-medium text-gray-900">Year:</span>
+                {{ parsedCitation.year }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Fallback if citation couldn't be parsed -->
+          <div *ngIf="!parsedCitation && paperDetails?.citation_string">
+            <p class="text-sm text-red-500 italic">
+              Failed to parse citation. Showing raw citation:
+            </p>
+            <p class="text-gray-700 whitespace-pre-line mt-1">
+              {{ paperDetails.citation_string }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
