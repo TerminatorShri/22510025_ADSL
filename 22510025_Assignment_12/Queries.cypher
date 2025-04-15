@@ -10,31 +10,31 @@ MATCH (c:City)
 RETURN c.name AS city, c.location.latitude AS latitude, c.location.longitude AS longitude
 LIMIT 10;
 
-WITH point({latitude: 40.7128, longitude: -74.0060}) AS referencePoint  // Set your reference point (e.g., New York)
+WITH point({latitude: 40.7128, longitude: -74.0060}) AS referencePoint  
 MATCH (c:City)
-WHERE point.distance(c.location, referencePoint) < 100000  // 100,000 meters = 100 km
+WHERE point.distance(c.location, referencePoint) < 100000  
 RETURN c.name AS city, point.distance(c.location, referencePoint) / 1000 AS distance_km
 ORDER BY distance_km
 LIMIT 10;
 
-MATCH (t:City {name: 'Delhi'})  // Find Tokyo in the database
-WITH t, t.location AS tokyoLocation
+MATCH (t:City {name: 'Delhi'})  
+WITH t, t.location AS delhiLocation
 MATCH (c:City)
-WHERE c.name <> 'Delhi'  // Exclude Tokyo itself from the results
-WITH c, point.distance(c.location, tokyoLocation) AS dist
+WHERE c.name <> 'Delhi'  
+WITH c, point.distance(c.location, delhiLocation) AS dist
 ORDER BY dist
 LIMIT 5
-RETURN c.name AS city, dist / 1000 AS distance_km  // Convert distance to kilometers
+RETURN c.name AS city, dist / 1000 AS distance_km  
 ORDER BY distance_km;
 
-MATCH (t:City {name: 'Tokyo'})  // Find Tokyo's coordinates
+MATCH (t:City {name: 'Tokyo'})  
 WITH t, t.location AS tokyoLocation
 MATCH (c:City)
-WHERE c.name <> 'Tokyo'  // Exclude Tokyo from the results
+WHERE c.name <> 'Tokyo'  
 WITH c, point.distance(c.location, tokyoLocation) AS dist
-ORDER BY dist DESC  // Sort by distance in descending order
+ORDER BY dist DESC  
 LIMIT 5
-RETURN c.name AS city, dist / 1000 AS distance_km  // Return cities and their distance in kilometers
+RETURN c.name AS city, dist / 1000 AS distance_km  
 ORDER BY distance_km DESC;
 
 WITH point({latitude: 35.6762, longitude: 139.6503}) AS tokyo, point({latitude: 51.5074, longitude: -0.1278}) AS london
