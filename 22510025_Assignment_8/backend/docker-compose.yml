@@ -40,9 +40,14 @@ services:
       - ndb2
     ports:
       - "3307:3306"
+    volumes:
+      - mysql1_data:/var/lib/mysql
     networks:
       cluster_net:
         ipv4_address: 192.168.0.10
+
+volumes:
+  mysql1_data:
 
 networks:
   cluster_net:
